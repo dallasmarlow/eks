@@ -15,7 +15,7 @@ variable "eks_version" {
 
 variable "eks_compute_instance_type" {
 	type = string
-	default = "t3a.large"
+	default = "t3a.small"
 }
 
 variable "kubectl_url" {
@@ -45,12 +45,42 @@ variable "remote_network" {
 
 variable "eks_vpc_network" {
 	type = string
-	default = "10.253.195.64/26"
+	default = "10.200.100.0/26"
+}
+
+variable "eks_priv_subnet_a_network" {
+	type = string
+	default = "10.200.100.0/28"
+}
+
+variable "eks_priv_subnet_b_network" {
+	type = string
+	default = "10.200.100.16/28"
+}
+
+variable "eks_pub_subnet_a_network" {
+	type = string
+	default = "10.200.100.32/28"
+}
+
+variable "eks_pub_subnet_b_network" {
+	type = string
+	default = "10.200.100.48/28"
 }
 
 variable "k8s_pod_network" {
 	type = string
 	default = "100.64.0.0/20"
+}
+
+variable "k8s_pod_subnet_a_network" {
+	type = string
+	default = "100.64.0.0/21"
+}
+
+variable "k8s_pod_subnet_b_network" {
+	type = string
+	default = "100.64.8.0/21"
 }
 
 variable "eks_cluster_name" {

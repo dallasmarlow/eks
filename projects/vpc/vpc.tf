@@ -9,7 +9,7 @@ resource "aws_vpc" "eks_test" {
 
 resource "aws_subnet" "priv_subnet_a" {
 	vpc_id = aws_vpc.eks_test.id
-	cidr_block = "10.253.195.64/28"
+	cidr_block = var.eks_priv_subnet_a_network
 	availability_zone = "us-east-2a"
 	tags = {
 		Name = "eks_test_priv_a"
@@ -20,7 +20,7 @@ resource "aws_subnet" "priv_subnet_a" {
 
 resource "aws_subnet" "priv_subnet_b" {
 	vpc_id = aws_vpc.eks_test.id
-	cidr_block = "10.253.195.80/28"
+	cidr_block = var.eks_priv_subnet_b_network
 	availability_zone = "us-east-2b"
 	tags = {
 		Name = "eks_test_priv_b"
@@ -31,7 +31,7 @@ resource "aws_subnet" "priv_subnet_b" {
 
 resource "aws_subnet" "pub_subnet_a" {
 	vpc_id = aws_vpc.eks_test.id
-	cidr_block = "10.253.195.96/28"
+	cidr_block = var.eks_pub_subnet_a_network
 	availability_zone = "us-east-2a"
 	map_public_ip_on_launch = true
 	tags = {
@@ -42,7 +42,7 @@ resource "aws_subnet" "pub_subnet_a" {
 
 resource "aws_subnet" "pub_subnet_b" {
 	vpc_id = aws_vpc.eks_test.id
-	cidr_block = "10.253.195.112/28"
+	cidr_block = var.eks_pub_subnet_b_network
 	availability_zone = "us-east-2b"
 	map_public_ip_on_launch = true
 	tags = {
@@ -60,7 +60,7 @@ resource "aws_vpc_ipv4_cidr_block_association" "k8s_pod_network" {
 
 resource "aws_subnet" "pod_subnet_a" {
 	vpc_id = aws_vpc.eks_test.id
-	cidr_block = "100.64.0.0/21"
+	cidr_block = var.k8s_pod_subnet_a_network
 	availability_zone = "us-east-2a"
 	depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
 	tags = {
@@ -72,7 +72,7 @@ resource "aws_subnet" "pod_subnet_a" {
 
 resource "aws_subnet" "pod_subnet_b" {
 	vpc_id = aws_vpc.eks_test.id
-	cidr_block = "100.64.8.0/21"
+	cidr_block = var.k8s_pod_subnet_b_network
 	availability_zone = "us-east-2b"
 	depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
 	tags = {

@@ -23,7 +23,11 @@ resource "aws_launch_template" "eks_compute" {
 	monitoring {
 		enabled = true
 	}
-	vpc_security_group_ids = [aws_security_group.eks_compute.id]
+	vpc_security_group_ids = [
+		aws_security_group.eks_compute.id,
+		data.terraform_remote_state.eks_cluster.outputs.eks_cluster_sg_id,
+		data.terraform_remote_state.vpc.outputs.ssh_internal_sg_id,
+	]
 	tag_specifications {
 		resource_type = "instance"
 		tags = {
@@ -33,7 +37,7 @@ resource "aws_launch_template" "eks_compute" {
 	}
 	update_default_version = true
 	user_data = base64encode(templatefile(
-		"../../templates/eks_worker_bootstrap.sh.tpl",
+		"../../templates/eks_compute_bootstrap.sh.tpl",
 		{
 			API_SERVER_URL = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_endpoint,
 			B64_CLUSTER_CA = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_ca,
@@ -45,7 +49,7 @@ resource "aws_launch_template" "eks_compute" {
 	}
 }
 
-resource "aws_autoscaling_group" "eks_worker" {
+resource "aws_autoscaling_group" "eks_compute" {
 	enabled_metrics = [
 		"GroupDesiredCapacity",
 		"GroupInServiceCapacity",
@@ -62,8 +66,8 @@ resource "aws_autoscaling_group" "eks_worker" {
 		"GroupTotalInstances",
 	]
 	name_prefix = "${data.terraform_remote_state.eks_cluster.outputs.eks_cluster_name}-eks-compute-"
-	max_size = 1
-	min_size = 1
+	max_size = 3
+	min_size = 0
 	launch_template {
 		id = aws_launch_template.eks_compute.id
 		version = aws_launch_template.eks_compute.latest_version
@@ -73,7 +77,5 @@ resource "aws_autoscaling_group" "eks_worker" {
 		data.terraform_remote_state.vpc.outputs.eks_test_priv_subnet_b,
 	]
 	termination_policies = ["OldestInstance"]
-	depends_on = [
-		aws_kms_grant.eks_compute_ebs_asg,
-        ]
+	depends_on = [aws_kms_grant.eks_compute_ebs_asg]
 }
