@@ -1,0 +1,6 @@
+projects/eks/
+run.sh
+setup_k8s_cni.sh
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
