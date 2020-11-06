@@ -4,4 +4,4 @@ cd projects/bastion
 BASTION_ADDR="$(terraform output bastion_ip)"
 cd -
 
-scp -Cr projects templates $BASTION_SSH_USER@$BASTION_ADDR:~/
+scp -Cr projects/k8s $BASTION_SSH_USER@$BASTION_ADDR:~/

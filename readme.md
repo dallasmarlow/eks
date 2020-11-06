@@ -11,10 +11,22 @@ The terraform projects have dependencies on output values between each other whi
 
 ## Docker
 
+While it is not a requirement interactions with this deployment are assumed to be performed within the docker container defined within this repo. This includes terraform executions and bastion ssh sessions.
+
 ```
 # build
 docker build -t eks -f docker/Dockerfile docker
 
 # run
 docker run -it --rm -v $(pwd):/opt/eks -v $HOME/.aws:/root/.aws eks
+```
+
+## Using an existing route53 zone
+
+In order to use an existing route53 zone (instead of creating a new one) the route53 zone must be imported before running `apply.sh` or `terraform apply` in the route53 project directory.
+
+```
+cd projects/route53
+terraform init
+terraform import aws_route53_zone.primary <zone id>
 ```

@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -e
-
-# exclude the route53 project as an existing zone needs to be imported manually
-projects=(terraform-backend vpc eks-cluster bastion ecr)
+projects=(terraform-backend vpc eks-cluster bastion route53 ecr)
 for project in ${projects[@]}; do
 	cd projects/$project
 	terraform init
