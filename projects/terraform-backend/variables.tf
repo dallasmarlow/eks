@@ -13,7 +13,7 @@ variable "eks_version" {
 	default = "1.18"
 }
 
-variable "eks_worker_instance_type" {
+variable "eks_compute_instance_type" {
 	type = string
 	default = "t3a.large"
 }
