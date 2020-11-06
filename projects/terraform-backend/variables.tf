@@ -5,7 +5,7 @@ variable "account_id" {
 
 variable "bastion_instance_type" {
 	type = string
-	default = "t3a.small"
+	default = "t3a.micro"
 }
 
 variable "eks_version" {

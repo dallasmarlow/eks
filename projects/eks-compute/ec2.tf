@@ -45,38 +45,40 @@ resource "aws_launch_template" "eks_compute" {
 		aws_kms_key.eks_worker_ebs,
 		aws_security_group.eks_worker,
 	]
+	lifecycle {
+		create_before_destroy = true
+	}
 }
 
-# resource "aws_autoscaling_group" "eks_worker" {
-# 	enabled_metrics = [
-# 		"GroupDesiredCapacity",
-# 		"GroupInServiceCapacity",
-# 		"GroupPendingCapacity",
-# 		"GroupMinSize",
-# 		"GroupMaxSize",
-# 		"GroupInServiceInstances",
-# 		"GroupPendingInstances",
-# 		"GroupStandbyInstances",
-# 		"GroupStandbyCapacity",
-# 		"GroupTerminatingCapacity",
-# 		"GroupTerminatingInstances",
-# 		"GroupTotalCapacity",
-# 		"GroupTotalInstances",
-# 	]
-# 	name_prefix = "${aws_eks_cluster.eks_cluster.name}-eks-worker-"
-# 	max_size = 1
-# 	min_size = 1
-# 	launch_template {
-# 		id = aws_launch_template.eks_worker.id
-# 		version = aws_launch_template.eks_worker.latest_version
-# 	}
-# 	vpc_zone_identifier  = [
-# 		data.terraform_remote_state.vpc.outputs.eks_test_priv_subnet_a,
-# 		data.terraform_remote_state.vpc.outputs.eks_test_priv_subnet_b,
-# 	]
-# 	termination_policies = ["OldestInstance"]
-# 	depends_on = [
-# 		aws_kms_grant.eks_worker_ebs_asg,
-# 		aws_launch_template.eks_worker,
-# 	]
-# }
+resource "aws_autoscaling_group" "eks_worker" {
+	enabled_metrics = [
+		"GroupDesiredCapacity",
+		"GroupInServiceCapacity",
+		"GroupPendingCapacity",
+		"GroupMinSize",
+		"GroupMaxSize",
+		"GroupInServiceInstances",
+		"GroupPendingInstances",
+		"GroupStandbyInstances",
+		"GroupStandbyCapacity",
+		"GroupTerminatingCapacity",
+		"GroupTerminatingInstances",
+		"GroupTotalCapacity",
+		"GroupTotalInstances",
+	]
+	name_prefix = "${aws_eks_cluster.eks_cluster.name}-eks-worker-"
+	max_size = 1
+	min_size = 1
+	launch_template {
+		id = aws_launch_template.eks_worker.id
+		version = aws_launch_template.eks_worker.latest_version
+	}
+	vpc_zone_identifier  = [
+		data.terraform_remote_state.vpc.outputs.eks_test_priv_subnet_a,
+		data.terraform_remote_state.vpc.outputs.eks_test_priv_subnet_b,
+	]
+	termination_policies = ["OldestInstance"]
+	depends_on = [
+		aws_kms_grant.eks_worker_ebs_asg,
+        ]
+}
