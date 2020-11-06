@@ -11,7 +11,7 @@ The terraform projects have dependencies on output values between each other whi
 
 ## Docker
 
-While it is not a requirement interactions with this deployment are assumed to be performed within the docker container defined within this repo. This includes terraform executions and bastion ssh sessions.
+While not a technical requirement, interactions with this deployment are intended to be performed within the docker container defined within this repo. This includes terraform executions and bastion ssh sessions.
 
 ```
 # build
