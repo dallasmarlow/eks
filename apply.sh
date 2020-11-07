@@ -16,6 +16,7 @@ fi
 for project in ${projects[@]}; do
 	cd projects/$project
 	terraform init
+	terraform plan
 	terraform apply -auto-approve
 	cd -
 done

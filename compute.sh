@@ -14,9 +14,13 @@ case $1 in
 		aws autoscaling describe-scaling-activities \
 			--auto-scaling-group-name $ASG_NAME
 		;;
+	describe)
+		aws autoscaling describe-auto-scaling-groups \
+			--auto-scaling-group-name $ASG_NAME
+		;;
 	refresh)
 		aws autoscaling start-instance-refresh \
-			--auto-scaling-group-name my-asg \
+			--auto-scaling-group-name $ASG_NAME \
 			--preferences "{\"InstanceWarmup\": $REFRESH_WARMUP_INTERVAL}"
 		;;
 	scale)
@@ -30,9 +34,9 @@ case $1 in
 		interval=${3:-1}
 		aws autoscaling put-scheduled-update-group-action \
 			--auto-scaling-group-name $ASG_NAME \
-			--min-size $instances \
+			--desired-capacity $instances \
 			--scheduled-action-name eks-compute-scale-up \
-			--start-time $(date -d "+5 second" -u +$DATE_FMT)
+			--start-time $(date -d "+3 second" -u +$DATE_FMT)
 		aws autoscaling put-scheduled-update-group-action \
 			--auto-scaling-group-name $ASG_NAME \
 			--min-size $MIN_ASG_INSTANCES \

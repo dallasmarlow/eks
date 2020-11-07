@@ -216,9 +216,7 @@ resource "aws_security_group" "internal_ssh_ingress" {
 		from_port = 22
 		to_port = 22
 		protocol = "tcp"
-		cidr_blocks = [
-			aws_vpc.eks_test.cidr_block,
-		]
+		self = true
 	}
 	revoke_rules_on_delete = true
 	tags = {

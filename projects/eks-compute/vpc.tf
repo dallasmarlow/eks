@@ -24,29 +24,20 @@ resource "aws_security_group_rule" "eks_compute_internal" {
 	type = "ingress"
 }
 
-# resource "aws_security_group_rule" "eks_compute_ingress" {
-# 	from_port = 1025
-# 	protocol = "tcp"
-# 	security_group_id = aws_security_group.eks_worker.id
-# 	source_security_group_id = aws_security_group.eks_cluster.id
-# 	to_port = 65535
-# 	type = "ingress"
-# }
-
-# resource "aws_security_group_rule" "eks_compute_ingress_bastion_ssh" {
-# 	from_port = 22
-# 	protocol = "tcp"
-# 	security_group_id = aws_security_group.eks_compute.id
-# 	source_security_group_id = data.terraform_remote_state.bastion.outputs.bastion_security_group_id
-# 	to_port = 22
-# 	type = "ingress"
-# }
+resource "aws_security_group_rule" "eks_compute_ingress" {
+	from_port = 1025
+	protocol = "tcp"
+	security_group_id = aws_security_group.eks_compute.id
+	source_security_group_id = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_sg_id
+	to_port = 65535
+	type = "ingress"
+}
 
 # resource "aws_security_group_rule" "eks_worker_ingress_https" {
 # 	from_port = 443
 # 	protocol = "tcp"
-# 	security_group_id = aws_security_group.eks_worker.id
-# 	source_security_group_id = aws_security_group.eks_cluster.id
+# 	security_group_id = aws_security_group.eks_compute.id
+# 	source_security_group_id = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_sg_id
 # 	to_port = 443
 # 	type = "ingress"
 # }

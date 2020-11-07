@@ -5,9 +5,12 @@ RUN apt-get update && \
 	curl dnsutils groff jq less python-pip ssh vim zip && \
 	apt-get clean
 RUN pip install awscli
+
 RUN ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N ""
+
 RUN curl -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl && \
 	chmod +x /usr/local/bin/kubectl
+
 RUN curl -o terraform.zip https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip && \
 	unzip -d /tmp/terraform terraform.zip && \
 	mv /tmp/terraform/terraform /usr/local/bin/ && \
