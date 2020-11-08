@@ -6,7 +6,7 @@ resource "aws_instance" "bastion" {
 	ami = data.aws_ssm_parameter.bastion_ami.value
 	iam_instance_profile = aws_iam_instance_profile.bastion_instance_profile.name
 	instance_type = var.bastion_instance_type
-	key_name = var.ssh_key
+	key_name = data.terraform_remote_state.ssh.outputs.eks_test_ec2_keypair_name
 	root_block_device {
 		volume_size = 40 # GB
 		encrypted = true

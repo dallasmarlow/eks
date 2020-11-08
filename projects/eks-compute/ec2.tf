@@ -19,7 +19,7 @@ resource "aws_launch_template" "eks_compute" {
 		name = aws_iam_instance_profile.eks_compute.name
 	}
 	instance_type = var.eks_compute_instance_type
-	key_name = var.ssh_key
+	key_name = data.terraform_remote_state.ssh.outputs.eks_test_ec2_keypair_name
 	monitoring {
 		enabled = true
 	}

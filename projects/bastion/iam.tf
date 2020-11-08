@@ -12,18 +12,6 @@ data "aws_iam_policy_document" "ec2_assume_role_policy" {
 	}
 }
 
-data "aws_iam_policy_document" "ec2_instance_connect" {
-	statement {
-		actions = ["ec2-instance-connect:SendSSHPublicKey"]
-		resources = ["arn:aws:ec2:${var.region}:${var.account_id}:instance/*"]
-		condition {
-			test = "StringEquals"
-			variable = "ec2:osuser"
-			values = ["ec2-user"]
-		}
-	}
-}
-
 data "aws_iam_policy_document" "eks_read_only" {
 	statement {
 		actions = [
@@ -32,11 +20,6 @@ data "aws_iam_policy_document" "eks_read_only" {
 		]
 		resources = ["*"]
 	}
-}
-
-resource "aws_iam_policy" "ec2_instance_connect" {
-	name_prefix = "bastion-ec2-instance-connect"
-	policy = data.aws_iam_policy_document.ec2_instance_connect.json
 }
 
 resource "aws_iam_policy" "eks_read_only" {
@@ -51,7 +34,7 @@ resource "aws_iam_role" "bastion" {
 
 resource "aws_iam_role_policy_attachment" "bastion_ec2_instance_connect" {
 	role = aws_iam_role.bastion.name
-	policy_arn = aws_iam_policy.ec2_instance_connect.arn
+	policy_arn = data.terraform_remote_state.ssh.outputs.ec2_instance_connect_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "bastion_ecr_power_user" {

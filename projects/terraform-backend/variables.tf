@@ -8,6 +8,11 @@ variable "bastion_instance_type" {
 	default = "t3a.micro"
 }
 
+variable "ec2_user" {
+	type = string
+	default = "ec2-user"
+}
+
 variable "eks_version" {
 	type = string
 	default = "1.18"
@@ -26,11 +31,6 @@ variable "kubectl_url" {
 variable "region" {
 	type = string
 	default = "us-east-2"
-}
-
-variable "ssh_key" {
-	type = string
-	default = "eks-test"
 }
 
 variable "terraform_url" {

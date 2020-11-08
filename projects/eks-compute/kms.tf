@@ -16,4 +16,8 @@ resource "aws_kms_grant" "eks_compute_ebs_asg" {
 		"DescribeKey",
 		"CreateGrant",
 	]
+	# the `AWSServiceRoleForAutoScaling` role is created after the first ASG is created within an AWS account
+	depends_on = [
+		aws_autoscaling_group.eks_compute,
+	]
 }

@@ -3,7 +3,7 @@ set -e
 
 optional_projects=(route53 ecr)
 if [[ -z $1 ]]; then
-	projects=(terraform-backend vpc eks-cluster eks-compute bastion)
+	projects=(terraform-backend vpc ssh eks-cluster eks-compute bastion)
 	if [[ -z $SKIP_OPTIONAL_PROJECTS ]]; then
 		for project in ${optional_projects[@]}; do
 			projects[${#projects[@]}]=$project
