@@ -13,9 +13,8 @@ exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&
 	echo '{"credsStore": "ecr-login"}' > /home/ec2-user/.docker/config.json
 
 	# setup kubectl
-	mkdir -p /home/ec2-user/.local/bin
-	curl -o /home/ec2-user/.local/bin/kubectl ${KUBECTL_URL}
-	chmod +x /home/ec2-user/.local/bin/kubectl
+	curl -o /usr/local/bin/kubectl ${KUBECTL_URL}
+	chmod +x /usr/local/bin/kubectl
 	aws eks update-kubeconfig \
 		--kubeconfig /home/ec2-user/.kube/config \
 		--name ${CLUSTER_NAME} \
@@ -23,5 +22,5 @@ exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&
 
 	# setup terraform
 	curl -o terraform.zip ${TERRAFORM_URL} && \
-		unzip -d /home/ec2-user/.local/bin terraform.zip && \
+		unzip -d /usr/local/bin terraform.zip && \
 		rm -f terraform.zip

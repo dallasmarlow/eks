@@ -22,7 +22,7 @@ fi
 jq_query=".Reservations[0].Instances[0]"
 instance=$(aws ec2 describe-instances --filter $EC2_FILTERS --output json | jq -r $jq_query)
 if [[ -z $instance ]]; then
-	echo "error: unable to find running EC2 instance using ip address: $EC2_IP"
+	echo "error: unable to find running EC2 instance: $1"
 	exit 1
 fi
 
@@ -37,4 +37,4 @@ aws ec2-instance-connect send-ssh-public-key \
 	--instance-id $instance_id \
 	--instance-os-user "${OS_USER}" \
 	--ssh-public-key "file://${PUBLIC_SSH_KEY}"
-ssh -A $OS_USER@$EC2_IP
+ssh -A $OS_USER@$EC2_IP "${@:2}"

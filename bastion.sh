@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 if [[ -z $EKS_MGMT ]]; then
 	echo "error: unsupported env"
@@ -10,8 +11,4 @@ cd projects/bastion
 BASTION_ADDR="$(terraform output bastion_ip)"
 cd -
 
-if [[ -z $SKIP_SEND_KEY ]]; then
-	ec2-instance-connect-send-key bastion
-fi
-
-scp -Cr projects/k8s $BASTION_SSH_USER@$BASTION_ADDR:~/
+ec2-instance-connect-ssh $BASTION_ADDR "$@"

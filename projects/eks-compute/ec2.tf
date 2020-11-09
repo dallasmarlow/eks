@@ -77,5 +77,4 @@ resource "aws_autoscaling_group" "eks_compute" {
 		data.terraform_remote_state.vpc.outputs.eks_test_priv_subnet_b,
 	]
 	termination_policies = ["OldestInstance"]
-	depends_on = [aws_kms_grant.eks_compute_ebs_asg]
 }

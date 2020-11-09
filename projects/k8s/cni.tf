@@ -1,7 +1,7 @@
 # https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/v1.7.5/config/v1.7/aws-k8s-cni.yaml
 
 # due to the issues listed below the terraform kubernetes-alpha provider is not able to create the required
-# `ClusterRole` and `DaemonSet` manifests. Until these issues are resolved these manafests will be created
+# `ClusterRole` and `DaemonSet` manifests. Until these issues are resolved these manifests will be created
 # using kubectl via the normal terraform kubernetes provider.
 
 # `ClusterRole` manifest fails to apply due to rule update conflicts resulting in the following error:
@@ -16,10 +16,44 @@
 # - .spec.template.spec.containers[name="aws-node"].image
 # - .spec.template.spec.initContainers[name="aws-vpc-cni-init"].image
 
-resource "kubectl_manifest" "cni" {
+# https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/v1.7.5/config/v1.7/aws-k8s-cni.yaml
+
+resource "kubectl_manifest" "cni_eni_cfg_crd" {
+	yaml_body = file("${path.module}/manifests/aws-k8s-cni/eni-cfg-crd.yaml")
+}
+
+resource "kubectl_manifest" "cni_service_account" {
+	yaml_body = file("${path.module}/manifests/aws-k8s-cni/service-account.yaml")
+}
+
+resource "kubectl_manifest" "cni_cluster_role" {
+	yaml_body = file("${path.module}/manifests/aws-k8s-cni/cluster-role.yaml")
+	depends_on = [
+		kubectl_manifest.cni_eni_cfg_crd,
+	]
+}
+
+resource "kubectl_manifest" "cni_cluster_role_binding" {
+	yaml_body = file("${path.module}/manifests/aws-k8s-cni/cluster-role-binding.yaml")
+	depends_on = [
+		kubectl_manifest.cni_cluster_role,
+		kubectl_manifest.cni_service_account,
+	]
+}
+
+resource "kubectl_manifest" "cni_daemonset" {
 	yaml_body = templatefile(
-		"templates/aws-k8s-cni.yaml.tpl",
-		{DOCKER_IMG = var.cni_docker_img, INIT_DOCKER_IMG = var.cni_init_docker_img})
+		"${path.module}/templates/aws-k8s-cni/daemonset.yaml.tpl",
+		{
+			CUSTOM_NETWORK_CFG = var.cni_custom_network_cfg,
+			DOCKER_IMG = var.cni_docker_img,
+			ENI_CONFIG_LABEL = var.cni_eni_config_label,
+			INIT_DOCKER_IMG = var.cni_init_docker_img,
+		}
+	)
+	depends_on = [
+		kubectl_manifest.cni_cluster_role_binding,
+	]
 }
 
 # resource "kubernetes_manifest" "cni_cluster_role_binding" {

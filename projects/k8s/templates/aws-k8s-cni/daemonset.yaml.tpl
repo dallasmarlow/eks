@@ -1,72 +1,3 @@
-# https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/v1.7.5/config/v1.7/aws-k8s-cni.yaml
----
-"apiVersion": "rbac.authorization.k8s.io/v1"
-"kind": "ClusterRoleBinding"
-"metadata":
-  "name": "aws-node"
-"roleRef":
-  "apiGroup": "rbac.authorization.k8s.io"
-  "kind": "ClusterRole"
-  "name": "aws-node"
-"subjects":
-- "kind": "ServiceAccount"
-  "name": "aws-node"
-  "namespace": "kube-system"
----
-"apiVersion": "rbac.authorization.k8s.io/v1"
-"kind": "ClusterRole"
-"metadata":
-  "name": "aws-node"
-"rules":
-- "apiGroups":
-  - "crd.k8s.amazonaws.com"
-  "resources":
-  - "eniconfigs"
-  "verbs":
-  - "get"
-  - "list"
-  - "watch"
-- "apiGroups":
-  - ""
-  "resources":
-  - "pods"
-  - "namespaces"
-  "verbs":
-  - "list"
-  - "watch"
-  - "get"
-- "apiGroups":
-  - ""
-  "resources":
-  - "nodes"
-  "verbs":
-  - "list"
-  - "watch"
-  - "get"
-  - "update"
-- "apiGroups":
-  - "extensions"
-  "resources":
-  - "*"
-  "verbs":
-  - "list"
-  - "watch"
----
-"apiVersion": "apiextensions.k8s.io/v1beta1"
-"kind": "CustomResourceDefinition"
-"metadata":
-  "name": "eniconfigs.crd.k8s.amazonaws.com"
-"spec":
-  "group": "crd.k8s.amazonaws.com"
-  "names":
-    "kind": "ENIConfig"
-    "plural": "eniconfigs"
-    "singular": "eniconfig"
-  "scope": "Cluster"
-  "versions":
-  - "name": "v1alpha1"
-    "served": true
-    "storage": true
 ---
 "apiVersion": "apps/v1"
 "kind": "DaemonSet"
@@ -127,7 +58,7 @@
         - "name": "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER"
           "value": "false"
         - "name": "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG"
-          "value": "false"
+          "value": "${CUSTOM_NETWORK_CFG}"
         - "name": "AWS_VPC_K8S_CNI_EXTERNALSNAT"
           "value": "false"
         - "name": "AWS_VPC_K8S_CNI_LOGLEVEL"
@@ -148,6 +79,8 @@
           "value": "false"
         - "name": "ENABLE_POD_ENI"
           "value": "false"
+        - "name": "ENI_CONFIG_LABEL_DEF"
+          "value": "${ENI_CONFIG_LABEL}"
         - "name": "MY_NODE_NAME"
           "valueFrom":
             "fieldRef":
@@ -235,10 +168,3 @@
     "rollingUpdate":
       "maxUnavailable": "10%"
     "type": "RollingUpdate"
----
-"apiVersion": "v1"
-"kind": "ServiceAccount"
-"metadata":
-  "name": "aws-node"
-  "namespace": "kube-system"
-...

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 DATE_FMT="%Y-%m-%dT%H:%M:%SZ"
 MIN_ASG_INSTANCES=${MIN_ASG_INSTANCES:-0}
 OUTPUT_KEY=${OUTPUT_KEY:-eks_compute_asg_name}
@@ -45,6 +45,6 @@ case $1 in
 			--start-time $(date -d "+${interval} hour" -u +$DATE_FMT)
 		;;
 	*)
-		echo "usage: $0 <activity|refresh|scale $num_instances|scale-interval $num_instances $hours>"
+		echo "usage: $0 <activity|describe|refresh|scale <num_instances>|scale-interval <num_instances> <hours>>"
 		exit 1
 esac
