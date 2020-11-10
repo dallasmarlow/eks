@@ -2,7 +2,7 @@ FROM debian:latest
 
 RUN apt-get update && \
 	apt-get install -y \
-	curl dnsutils groff jq less python-pip ssh vim zip && \
+	curl dnsutils git groff jq less python-pip ssh vim zip && \
 	apt-get clean
 RUN pip install awscli
 
