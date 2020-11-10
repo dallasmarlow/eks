@@ -15,7 +15,11 @@ resource "aws_instance" "bastion" {
 	subnet_id = data.terraform_remote_state.vpc.outputs.eks_test_pub_subnet_a
 	user_data = templatefile(
 		"../../templates/bastion_bootstrap.sh.tpl",
-		{CLUSTER_NAME = var.eks_cluster_name, KUBECTL_URL = var.kubectl_url, TERRAFORM_URL = var.terraform_url})
+		{
+			CLUSTER_NAME = var.eks_cluster_name,
+			KUBECTL_URL = var.kubectl_url,
+			S3_BUCKET = aws_s3_bucket.bastion_utils.id,
+			TERRAFORM_URL = var.terraform_url})
 	vpc_security_group_ids = [
 		aws_security_group.bastion.id,
 		data.terraform_remote_state.eks_cluster.outputs.eks_cluster_sg_id,
@@ -25,6 +29,11 @@ resource "aws_instance" "bastion" {
 	tags = {
 		Name = "bastion"
 	}
+	depends_on = [
+		aws_s3_bucket_object.ec2_instance_connect_common,
+		aws_s3_bucket_object.ec2_instance_connect_send_key,
+		aws_s3_bucket_object.ec2_instance_connect_ssh,
+	]
 }
 
 resource "aws_eip" "bastion" {

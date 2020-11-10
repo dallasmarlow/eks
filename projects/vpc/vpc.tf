@@ -10,7 +10,7 @@ resource "aws_vpc" "eks_test" {
 resource "aws_subnet" "priv_subnet_a" {
 	vpc_id = aws_vpc.eks_test.id
 	cidr_block = var.eks_priv_subnet_a_network
-	availability_zone = "us-east-2a"
+	availability_zone = "${var.region}a"
 	tags = {
 		Name = "eks_test_priv_a"
 		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
@@ -21,7 +21,7 @@ resource "aws_subnet" "priv_subnet_a" {
 resource "aws_subnet" "priv_subnet_b" {
 	vpc_id = aws_vpc.eks_test.id
 	cidr_block = var.eks_priv_subnet_b_network
-	availability_zone = "us-east-2b"
+	availability_zone = "${var.region}b"
 	tags = {
 		Name = "eks_test_priv_b"
 		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
@@ -32,7 +32,7 @@ resource "aws_subnet" "priv_subnet_b" {
 resource "aws_subnet" "pub_subnet_a" {
 	vpc_id = aws_vpc.eks_test.id
 	cidr_block = var.eks_pub_subnet_a_network
-	availability_zone = "us-east-2a"
+	availability_zone = "${var.region}a"
 	map_public_ip_on_launch = true
 	tags = {
 		Name = "eks_test_pub_a"
@@ -43,7 +43,7 @@ resource "aws_subnet" "pub_subnet_a" {
 resource "aws_subnet" "pub_subnet_b" {
 	vpc_id = aws_vpc.eks_test.id
 	cidr_block = var.eks_pub_subnet_b_network
-	availability_zone = "us-east-2b"
+	availability_zone = "${var.region}b"
 	map_public_ip_on_launch = true
 	tags = {
 		Name = "eks_test_pub_b"
@@ -61,7 +61,7 @@ resource "aws_vpc_ipv4_cidr_block_association" "k8s_pod_network" {
 resource "aws_subnet" "pod_subnet_a" {
 	vpc_id = aws_vpc.eks_test.id
 	cidr_block = var.k8s_pod_subnet_a_network
-	availability_zone = "us-east-2a"
+	availability_zone = "${var.region}a"
 	depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
 	tags = {
 		Name = "eks_test_pod_a"
@@ -73,7 +73,7 @@ resource "aws_subnet" "pod_subnet_a" {
 resource "aws_subnet" "pod_subnet_b" {
 	vpc_id = aws_vpc.eks_test.id
 	cidr_block = var.k8s_pod_subnet_b_network
-	availability_zone = "us-east-2b"
+	availability_zone = "${var.region}b"
 	depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
 	tags = {
 		Name = "eks_test_pod_b"

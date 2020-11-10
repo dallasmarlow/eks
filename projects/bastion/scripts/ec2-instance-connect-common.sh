@@ -1,0 +1,1 @@
+../../../docker/scripts/ec2-instance-connect-common.sh

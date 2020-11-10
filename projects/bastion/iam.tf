@@ -12,6 +12,15 @@ data "aws_iam_policy_document" "ec2_assume_role_policy" {
 	}
 }
 
+data "aws_iam_policy_document" "ec2_read_only" {
+	statement {
+		actions = [
+			"ec2:DescribeInstances",
+		]
+		resources = ["*"]
+	}
+}
+
 data "aws_iam_policy_document" "eks_read_only" {
 	statement {
 		actions = [
@@ -22,9 +31,31 @@ data "aws_iam_policy_document" "eks_read_only" {
 	}
 }
 
+data "aws_iam_policy_document" "s3_bastion_utils_read_only" {
+	statement {
+		actions = [
+			"s3:GetObject",
+			"s3:GetObjectVersion",
+		]
+		resources = [
+			"${aws_s3_bucket.bastion_utils.arn}/*",
+		]
+	}
+}
+
+resource "aws_iam_policy" "ec2_read_only" {
+	name_prefix = "bastion-ec2-read-only"
+	policy = data.aws_iam_policy_document.ec2_read_only.json
+}
+
 resource "aws_iam_policy" "eks_read_only" {
 	name_prefix = "bastion-eks-read-only"
 	policy = data.aws_iam_policy_document.eks_read_only.json
+}
+
+resource "aws_iam_policy" "s3_bastion_utils_read_only" {
+	name_prefix = "bastion-s3-bastion-utils-read-only"
+	policy = data.aws_iam_policy_document.s3_bastion_utils_read_only.json
 }
 
 resource "aws_iam_role" "bastion" {
@@ -37,14 +68,24 @@ resource "aws_iam_role_policy_attachment" "bastion_ec2_instance_connect" {
 	policy_arn = data.terraform_remote_state.ssh.outputs.ec2_instance_connect_policy_arn
 }
 
+resource "aws_iam_role_policy_attachment" "bastion_ec2_read_only" {
+	role = aws_iam_role.bastion.name
+	policy_arn = aws_iam_policy.ec2_read_only.arn
+}
+
 resource "aws_iam_role_policy_attachment" "bastion_ecr_power_user" {
 	role = aws_iam_role.bastion.name
 	policy_arn = data.aws_iam_policy.ecr_power_user.arn
 }
 
-resource "aws_iam_role_policy_attachment" "bastion_eks_read_only"  {
+resource "aws_iam_role_policy_attachment" "bastion_eks_read_only" {
 	role = aws_iam_role.bastion.name
 	policy_arn = aws_iam_policy.eks_read_only.arn
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_s3_bastion_utils_read_only" {
+	role = aws_iam_role.bastion.name
+	policy_arn = aws_iam_policy.s3_bastion_utils_read_only.arn
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_dynamodb_locktable" {

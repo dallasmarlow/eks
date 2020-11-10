@@ -22,6 +22,46 @@ resource "kubectl_manifest" "cni_eni_cfg_crd" {
 	yaml_body = file("${path.module}/manifests/aws-k8s-cni/eni-cfg-crd.yaml")
 }
 
+resource "kubernetes_manifest" "cni_pod_network_a_eni_cfg_crd" {
+	provider = kubernetes-alpha
+	manifest = {
+		apiVersion = "crd.k8s.amazonaws.com/v1alpha1"
+		kind = "ENIConfig"
+		metadata = {
+			name = "${var.region}a"
+		}
+		spec = {
+			subnet = data.terraform_remote_state.vpc.outputs.eks_test_pod_subnet_a
+			securityGroups = [
+				data.terraform_remote_state.eks_compute.outputs.eks_compute_sg,
+			]
+		}
+	}
+	depends_on = [
+		kubectl_manifest.cni_eni_cfg_crd,
+	]
+}
+
+resource "kubernetes_manifest" "cni_pod_network_b_eni_cfg_crd" {
+	provider = kubernetes-alpha
+	manifest = {
+		apiVersion = "crd.k8s.amazonaws.com/v1alpha1"
+		kind = "ENIConfig"
+		metadata = {
+			name = "${var.region}b"
+		}
+		spec = {
+			subnet = data.terraform_remote_state.vpc.outputs.eks_test_pod_subnet_b
+			securityGroups = [
+				data.terraform_remote_state.eks_compute.outputs.eks_compute_sg,
+			]
+		}
+	}
+	depends_on = [
+		kubectl_manifest.cni_eni_cfg_crd,
+	]
+}
+
 resource "kubectl_manifest" "cni_service_account" {
 	yaml_body = file("${path.module}/manifests/aws-k8s-cni/service-account.yaml")
 }
@@ -43,7 +83,7 @@ resource "kubectl_manifest" "cni_cluster_role_binding" {
 
 resource "kubectl_manifest" "cni_daemonset" {
 	yaml_body = templatefile(
-		"${path.module}/templates/aws-k8s-cni/daemonset.yaml.tpl",
+		"${path.module}/manifests/aws-k8s-cni/daemonset.yaml.tpl",
 		{
 			CUSTOM_NETWORK_CFG = var.cni_custom_network_cfg,
 			DOCKER_IMG = var.cni_docker_img,

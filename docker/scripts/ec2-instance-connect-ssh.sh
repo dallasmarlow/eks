@@ -16,7 +16,11 @@ else
 		fi
 	fi
 
-	EC2_FILTERS="${EC2_FILTERS} Name=ip-address,Values=${EC2_IP}"
+	if [[ -z $EKS_MGMT ]]; then # assume running from bastion and w/i VPC
+		EC2_FILTERS="${EC2_FILTERS} Name=network-interface.addresses.private-ip-address,Values=${EC2_IP}"
+	else # assume running w/i EKS management container outside of VPC
+		EC2_FILTERS="${EC2_FILTERS} Name=ip-address,Values=${EC2_IP}"
+	fi
 fi
 
 jq_query=".Reservations[0].Instances[0]"
@@ -29,7 +33,11 @@ fi
 instance_id=$(echo $instance | jq -r '.InstanceId')
 instance_az=$(echo $instance | jq -r '.Placement.AvailabilityZone')
 if [[ -z $EC2_IP ]]; then
-	EC2_IP=$(echo $instance | jq -r '.PublicIpAddress')
+	if [[ -z $EKS_MGMT ]]; then # assume running from bastion and w/i VPC
+		EC2_IP=$(echo $instance | jq -r '.PrivateIpAddress')
+	else # assume running w/i EKS management container outside of VPC
+		EC2_IP=$(echo $instance | jq -r '.PublicIpAddress')
+	fi
 fi
 
 aws ec2-instance-connect send-ssh-public-key \
@@ -37,4 +45,4 @@ aws ec2-instance-connect send-ssh-public-key \
 	--instance-id $instance_id \
 	--instance-os-user "${OS_USER}" \
 	--ssh-public-key "file://${PUBLIC_SSH_KEY}"
-ssh -A $OS_USER@$EC2_IP "${@:2}"
+ssh -Att $OS_USER@$EC2_IP "${@:2}"

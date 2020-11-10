@@ -17,3 +17,8 @@ variable "cni_eni_config_label" {
 	type = string
 	default = "topology.kubernetes.io/zone"
 }
+
+variable "region" {
+	type = string
+	default = "us-east-2"
+}
