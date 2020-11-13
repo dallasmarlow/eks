@@ -18,6 +18,11 @@ variable "cni_eni_config_label" {
 	default = "topology.kubernetes.io/zone"
 }
 
+variable "metrics_server_docker_img" {
+	type = string
+	default = "k8s.gcr.io/metrics-server/metrics-server:v0.3.7"
+}
+
 variable "region" {
 	type = string
 	default = "us-east-2"

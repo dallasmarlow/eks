@@ -236,14 +236,14 @@ data "aws_iam_policy_document" "aws_lb_controller_trust_policy" {
 	}
 }
 
-resource "aws_iam_role" "aws_lb_controller" {
-	name = "${var.eks_cluster_name}-aws-lb-controller"
-	assume_role_policy = data.aws_iam_policy_document.aws_lb_controller_trust_policy.json
-}
-
 resource "aws_iam_policy" "aws_lb_controller" {
 	name_prefix = "aws-lb-controller"
 	policy = data.aws_iam_policy_document.aws_lb_controller.json
+}
+
+resource "aws_iam_role" "aws_lb_controller" {
+	name = "${var.eks_cluster_name}-aws-lb-controller"
+	assume_role_policy = data.aws_iam_policy_document.aws_lb_controller_trust_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_lb_controller"  {
