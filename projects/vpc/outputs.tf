@@ -2,6 +2,10 @@ output "eks_test_vpc_id" {
 	value = aws_vpc.eks_test.id
 }
 
+output "eks_test_vpc_arn" {
+	value = aws_vpc.eks_test.arn
+}
+
 output "eks_test_vpc_network" {
 	value = aws_vpc.eks_test.cidr_block
 }

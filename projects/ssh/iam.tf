@@ -9,6 +9,13 @@ data "aws_iam_policy_document" "ec2_instance_connect" {
 				var.ec2_user,
 			]
 		}
+		# condition {
+		# 	test = "StringEquals"
+		# 	variable = "ec2:Vpc"
+		# 	values = [
+		# 		data.terraform_remote_state.vpc.outputs.eks_test_vpc_arn,
+		# 	]
+		# }
 	}
 }
 

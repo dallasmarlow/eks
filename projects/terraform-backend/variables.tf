@@ -5,7 +5,7 @@ variable "account_id" {
 
 variable "bastion_instance_type" {
 	type = string
-	default = "t3a.micro"
+	default = "t3a.nano"
 }
 
 variable "ec2_user" {

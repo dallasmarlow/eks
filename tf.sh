@@ -18,7 +18,15 @@ else
 	projects=($2)
 fi
 
-if [[ $1 = "destroy" ]]; then
+
+if [[ $1 = "clean" ]]; then
+	for project in ${projects[@]}; do
+		echo "removing local terraform state for project: ${project}"
+		cd projects/$project
+		rm -frv errored.tfstate terraform.tfstate* .terraform
+		cd -
+	done
+elif [[ $1 = "destroy" ]]; then
 	for (( i=${#projects[@]}-1 ; i >= 0 ; i-- )); do
 		project=${projects[i]}
 		echo "destroying project: ${project}"
