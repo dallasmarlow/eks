@@ -1,5 +1,5 @@
 data "aws_ssm_parameter" "bastion_ami" {
-  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-${var.bastion_arch}-gp2"
 }
 
 resource "aws_instance" "bastion" {
@@ -8,11 +8,11 @@ resource "aws_instance" "bastion" {
 	instance_type = var.bastion_instance_type
 	key_name = data.terraform_remote_state.ssh.outputs.eks_test_ec2_keypair_name
 	root_block_device {
-		volume_size = 40 # GB
+		volume_size = var.bastion_ebs_volume_size
 		encrypted = true
 		kms_key_id = aws_kms_key.bastion_ebs.arn
 	}
-	subnet_id = data.terraform_remote_state.vpc.outputs.eks_test_pub_subnet_a
+	subnet_id = data.terraform_remote_state.vpc.outputs.eks_test_pub_subnet_b
 	user_data = templatefile(
 		"../../templates/bastion_bootstrap.sh.tpl",
 		{

@@ -3,9 +3,21 @@ variable "account_id" {
 	default = "052780769609"
 }
 
+variable "bastion_arch" {
+	type = string
+	default = "arm64"
+	# default = "x86_64"
+}
+
+variable "bastion_ebs_volume_size" {
+	type = number
+	default = 10 # GB
+}
+
 variable "bastion_instance_type" {
 	type = string
-	default = "t3a.nano"
+	default = "t4g.nano"
+	# default = "t3a.nano"
 }
 
 variable "ec2_user" {
@@ -25,7 +37,8 @@ variable "eks_compute_instance_type" {
 
 variable "kubectl_url" {
 	type = string
-	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl"
+	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/arm64/kubectl"
+	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl"
 }
 
 variable "region" {
@@ -35,7 +48,8 @@ variable "region" {
 
 variable "terraform_url" {
 	type = string
-	default = "https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip"
+	default = "https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_arm64.zip"
+	# default = "https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip"
 }
 
 variable "remote_network" {
