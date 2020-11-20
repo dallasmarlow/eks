@@ -6,7 +6,7 @@ if [[ -z $1 ]]; then
 	exit 1
 fi
 
-optional_projects=(route53 ecr)
+optional_projects=(ecr route53)
 if [[ -z $2 ]]; then
 	projects=(terraform-backend vpc ssh eks-cluster eks-compute bastion)
 	if [[ -z $SKIP_OPTIONAL_PROJECTS ]]; then
