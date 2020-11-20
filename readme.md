@@ -62,6 +62,13 @@ terraform init
 ```
 
 Once the initial backend setup has been completed terraform projects can be automatically applied using `tf.sh apply`.
+```
+# start management container if not already running
+./run.sh
+
+cd /opt/eks
+./tf.sh apply
+```
 
 ## Using an existing route53 zone
 
