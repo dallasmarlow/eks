@@ -39,6 +39,12 @@ variable "kubectl_url" {
 	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl"
 }
 
+# this value needs to be computed based on the instance type, due to the custom CNI pod networking
+# setup used by this automation the formula for deriving the value is:
+# maxPods = (numInterfaces - 1) * (maxIpv4PerInterface - 1) + numDaemonSetsRunningInHostMode
+
+# the base number of daemonsets deployed is 2 (aws-node and kube-proxy)
+# ENI limits per-instance type can be found at: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html
 variable "kubelet_max_pods" {
 	type = number
 	default = 12
