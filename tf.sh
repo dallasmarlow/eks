@@ -48,7 +48,7 @@ else # apply
 		cd projects/$project
 		terraform init
 		terraform plan
-		terraform apply -auto-approve
+		terraform apply -auto-approve -compact-warnings
 		cd -
 	done
 fi
