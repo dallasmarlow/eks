@@ -4,10 +4,21 @@ DATE_FMT="%Y-%m-%dT%H:%M:%SZ"
 MIN_ASG_INSTANCES=${MIN_ASG_INSTANCES:-0}
 OUTPUT_KEY=${OUTPUT_KEY:-eks_compute_asg_name}
 REFRESH_WARMUP_INTERVAL=${REFRESH_WARMUP_INTERVAL:-60}
+COMPUTE_USAGE="usage: $0 <activity|describe|refresh|scale <num_instances>|scale-interval <num_instances> <hours>>"
+
+if [[ -z $1 ]]; then
+	echo $COMPUTE_USAGE
+	exit 1
+fi
 
 cd projects/eks-compute
 ASG_NAME=$(terraform output $OUTPUT_KEY)
 cd -
+
+if [[ -z $ASG_NAME ]]; then
+	echo "unable to detect auto-scaling group from terraform eks-compute outputs"
+	exit 1
+fi
 
 case $1 in
 	activity)
@@ -45,6 +56,6 @@ case $1 in
 			--start-time $(date -d "+${interval} hour" -u +$DATE_FMT)
 		;;
 	*)
-		echo "usage: $0 <activity|describe|refresh|scale <num_instances>|scale-interval <num_instances> <hours>>"
+		echo $COMPUTE_USAGE
 		exit 1
 esac
