@@ -14,7 +14,7 @@ resource "aws_instance" "bastion" {
 	}
 	subnet_id = data.terraform_remote_state.vpc.outputs.eks_test_pub_subnet_b
 	user_data = templatefile(
-		"../../templates/bastion_bootstrap.sh.tpl",
+		"${path.module}/templates/bootstrap.sh.tpl",
 		{
 			CLUSTER_NAME = var.eks_cluster_name,
 			KUBECTL_URL = var.kubectl_url,

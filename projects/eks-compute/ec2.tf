@@ -37,7 +37,7 @@ resource "aws_launch_template" "eks_compute" {
 	}
 	update_default_version = true
 	user_data = base64encode(templatefile(
-		"../../templates/eks_compute_bootstrap.sh.tpl",
+		"${path.module}/templates/bootstrap.sh.tpl",
 		{
 			API_SERVER_URL = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_endpoint,
 			B64_CLUSTER_CA = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_ca,
