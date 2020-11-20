@@ -6,7 +6,6 @@ variable "account_id" {
 variable "bastion_arch" {
 	type = string
 	default = "arm64"
-	# default = "x86_64"
 }
 
 variable "bastion_ebs_volume_size" {
@@ -17,7 +16,6 @@ variable "bastion_ebs_volume_size" {
 variable "bastion_instance_type" {
 	type = string
 	default = "t4g.nano"
-	# default = "t3a.nano"
 }
 
 variable "ec2_user" {
@@ -32,13 +30,18 @@ variable "eks_version" {
 
 variable "eks_compute_instance_type" {
 	type = string
-	default = "t3a.small"
+	default = "t3a.medium"
 }
 
 variable "kubectl_url" {
 	type = string
 	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/arm64/kubectl"
 	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl"
+}
+
+variable "kubelet_max_pods" {
+	type = number
+	default = 12
 }
 
 variable "region" {

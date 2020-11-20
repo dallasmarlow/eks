@@ -35,6 +35,7 @@ elif [[ $1 = "destroy" ]]; then
 		# retain route53 zone
 		if [[ $project = "route53" ]]; then
 			terraform destroy -auto-approve -target aws_route53_record.bastion
+			terraform destroy -auto-approve -target aws_route53_record.paste
 		else
 			terraform destroy -auto-approve
 		fi

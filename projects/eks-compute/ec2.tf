@@ -43,6 +43,7 @@ resource "aws_launch_template" "eks_compute" {
 			B64_CLUSTER_CA = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_ca,
 			CLUSTER_NAME = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_name,
 			KUBECTL_URL = var.kubectl_url,
+			KUBELET_MAX_PODS = var.kubelet_max_pods,
 		}))
 	lifecycle {
 		create_before_destroy = true
