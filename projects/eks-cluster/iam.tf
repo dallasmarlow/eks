@@ -248,5 +248,5 @@ resource "aws_iam_role_policy_attachment" "eks_cluster"  {
 
 # resource "aws_iam_role_policy_attachment" "aws_lb_controller"  {
 # 	role = aws_iam_role.aws_lb_controller.name
-# 	policy_arn = aws_iam_policy.aws_lb_controller.arn
-}
+#  	policy_arn = aws_iam_policy.aws_lb_controller.arn
+# }
