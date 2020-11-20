@@ -35,8 +35,8 @@ The terraform projects have dependencies on output values between each other whi
 - `eks-cluster`
 - `eks-compute`
 - `bastion`
-- `route53`
 - `ecr`
+- `route53`
 
 The initial setup described above for the `terraform-backend` project can be performed using the following commands:
 
