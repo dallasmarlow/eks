@@ -1,6 +1,6 @@
-output "aws_lb_controller_role_arn" {
-	value = aws_iam_role.aws_lb_controller.arn
-}
+# output "aws_lb_controller_role_arn" {
+# 	value = aws_iam_role.aws_lb_controller.arn
+# }
 
 output "eks_cluster_ca" {
 	value = aws_eks_cluster.eks_cluster.certificate_authority[0].data
