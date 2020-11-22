@@ -1,3 +1,4 @@
+crash.log
 docker/aws
 errored.tfstate
 projects/eks/
