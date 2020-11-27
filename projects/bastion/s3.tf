@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "bastion_utils" {
-	bucket = "eks-test-bastion-utils"
+	bucket = "${var.eks_cluster_name}-bastion-utils"
 	acl = "private"
 	force_destroy = true
 	server_side_encryption_configuration {
@@ -33,4 +33,10 @@ resource "aws_s3_bucket_object" "ec2_instance_connect_ssh" {
 	bucket = aws_s3_bucket.bastion_utils.id
 	content = file("${path.module}/scripts/ec2-instance-connect-ssh.sh")
 	key = "ec2-instance-connect-ssh"
+}
+
+resource "aws_s3_bucket_object" "list_eks_admin_token" {
+	bucket = aws_s3_bucket.bastion_utils.id
+	content = file("${path.module}/scripts/list-eks-admin-token.sh")
+	key = "list-eks-admin-token"
 }

@@ -1,4 +1,7 @@
-#!/bin/bash -xe
+#!/bin/bash
+set -e
+set -x
+
 exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
 	region=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
 
@@ -16,6 +19,22 @@ EOL
 		--kubeconfig /home/ec2-user/.kube/config \
 		--name ${CLUSTER_NAME} \
 		--region $region
+
+	# setup kubectl-proxy unit
+	cat > /lib/systemd/system/kubectl-proxy.service <<EOL
+[Unit]
+Description=kubectl proxy
+After=network.target
+
+[Service]
+User=ec2-user
+ExecStart=/bin/bash -c "/usr/local/bin/kubectl proxy"
+StartLimitInterval=0
+RestartSec=10
+Restart=always
+EOL
+	systemctl daemon-reload
+	systemctl enable kubectl-proxy.service
 
 	# setup ssh key
 	mkdir -p /home/ec2-user/.ssh && \
@@ -44,4 +63,6 @@ EOL
 	aws s3 cp s3://${S3_BUCKET}/ec2-instance-connect-common.sh /usr/local/bin
 	aws s3 cp s3://${S3_BUCKET}/ec2-instance-connect-send-key /usr/local/bin
 	aws s3 cp s3://${S3_BUCKET}/ec2-instance-connect-ssh /usr/local/bin
-	chmod +x /usr/local/bin/ec2-instance-connect-*
+	aws s3 cp s3://${S3_BUCKET}/list-eks-admin-token /usr/local/bin
+	chmod +x /usr/local/bin/ec2-instance-connect-* \
+		/usr/local/bin/list-eks-admin-token

@@ -33,6 +33,7 @@ resource "aws_instance" "bastion" {
 		aws_s3_bucket_object.ec2_instance_connect_common,
 		aws_s3_bucket_object.ec2_instance_connect_send_key,
 		aws_s3_bucket_object.ec2_instance_connect_ssh,
+		aws_s3_bucket_object.list_eks_admin_token,
 	]
 }
 

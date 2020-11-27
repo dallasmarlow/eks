@@ -3,7 +3,11 @@ set -e
 source "$(dirname $0)/ec2-instance-connect-common.sh"
 
 if [[ ! -z $1 ]]; then
-	EC2_FILTERS="${EC2_FILTERS} Name=tag:Name,Values=$1"
+	if [[ $1 =~ ^i-[0-9a-f]+$ ]]; then
+		EC2_FILTERS="${EC2_FILTERS} Name=instance-id,Values=${1}"
+	else
+		EC2_FILTERS="${EC2_FILTERS} Name=tag:Name,Values=$1"
+	fi
 fi
 
 ec2_instances=$(aws ec2 describe-instances --filter ${EC2_FILTERS} --output json | jq  -c '.Reservations[].Instances | .[]')
