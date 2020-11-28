@@ -16,3 +16,11 @@ resource "aws_s3_bucket" "terraform-backend" {
 	# 	enabled = true
 	# }
 }
+
+resource "aws_s3_bucket_public_access_block" "terraform-backend" {
+	bucket = aws_s3_bucket.terraform-backend.id
+	block_public_acls = true
+	block_public_policy = true
+	ignore_public_acls = true
+	restrict_public_buckets = true
+}

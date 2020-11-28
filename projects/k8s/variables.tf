@@ -20,6 +20,21 @@ variable "cni_eni_config_label" {
 	default = "topology.kubernetes.io/zone"
 }
 
+variable "kubernetes_dashboard_chart_version" {
+	type = string
+	default = "3.0.0"
+}
+
+variable "lb_controller_chart_version" {
+	type = string
+	default = "1.0.8"
+}
+
+variable "lb_controller_service_account_name" {
+	type = string
+	default = "aws-load-balancer-controller"
+}
+
 variable "metrics_server_docker_img" {
 	type = string
 	default = "k8s.gcr.io/metrics-server/metrics-server:v0.3.7"

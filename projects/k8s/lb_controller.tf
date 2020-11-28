@@ -292,7 +292,7 @@ resource "helm_release" "lb_controller" {
 	}
 	set {
 		name = "vpcId"
-		value = data.terraform_remote_state.vpc.outputs.vpc_id
+		value = data.terraform_remote_state.vpc.outputs.eks_test_vpc_id
 	}
 	depends_on = [
 		kubectl_manifest.lb_controller_target_group_bindings_crd,
