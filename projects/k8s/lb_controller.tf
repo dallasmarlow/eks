@@ -273,8 +273,9 @@ resource "helm_release" "lb_controller" {
 	name = "aws-load-balancer-controller"
 	namespace = "kube-system"
 	repository = "https://aws.github.io/eks-charts/"
+	skip_crds = true
 	version = var.lb_controller_chart_version
-	wait = false # this chart always timesouts when deployed
+	# wait = false # this chart always timesouts when deployed
 	set {
 		name = "clusterName"
 		value = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_name
