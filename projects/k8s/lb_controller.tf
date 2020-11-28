@@ -6,8 +6,8 @@
 
 resource "kubectl_manifest" "lb_controller_target_group_bindings_crd" {
 	yaml_body = yamlencode({
-		apiVersion = "v1"
-		kind = "ServiceAccount"
+		apiVersion = "apiextensions.k8s.io/v1beta1"
+		kind = "CustomResourceDefinition"
 		metadata = {
 			annotations = {
 				"controller-gen.kubebuilder.io/version" = "v0.4.0"
