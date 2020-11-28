@@ -14,7 +14,7 @@ resource "aws_subnet" "priv_subnet_a" {
 	tags = {
 		Name = "eks_test_priv_a"
 		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-		"kubernetes.io/role/internal-elb" = 1
+		# "kubernetes.io/role/internal-elb" = 1
 	}
 }
 
@@ -25,7 +25,7 @@ resource "aws_subnet" "priv_subnet_b" {
 	tags = {
 		Name = "eks_test_priv_b"
 		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-		"kubernetes.io/role/internal-elb" = 1
+		# "kubernetes.io/role/internal-elb" = 1
 	}
 }
 
