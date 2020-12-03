@@ -1,29 +1,28 @@
-resource "aws_s3_bucket" "lb_logs" {
-	bucket = "${var.eks_cluster_name}-lb-logs"
-	acl = "private"
-	force_destroy = true
-	server_side_encryption_configuration {
-		rule {
-			apply_server_side_encryption_by_default {
-				sse_algorithm = "AES256"
-			}
+data "aws_iam_policy_document" "helm_repo_bucket_policy" {
+	statement {
+		actions = [
+			"s3:*",
+		]
+		condition {
+			test = "NotIpAddress"
+			variable = "aws:SourceIp"
+			values = [
+				var.remote_network,
+				var.eks_vpc_network,
+			]
 		}
-	}
-
-	lifecycle_rule {
-		abort_incomplete_multipart_upload_days = 1
-		id = "expire"
-		enabled = true
-		expiration {
-			days = var.eks_cluster_logs_retention_days
+		effect = "Deny"
+		principals {
+			type = "AWS"
+			identifiers = [
+				"*",
+			]
 		}
+		resources = [
+			aws_s3_bucket.helm_repo.arn,
+			"${aws_s3_bucket.helm_repo.arn}/*",
+		]
 	}
-
-	# use versioning for production / long term use-cases, but disable
-	# for ephemeral deployments to allow `terraform destroy` to delete the bucket automatically.
-	# versioning {
-	# 	enabled = true
-	# }
 }
 
 data "aws_iam_policy_document" "lb_logs_bucket_policy" {
@@ -76,6 +75,47 @@ data "aws_iam_policy_document" "lb_logs_bucket_policy" {
 			aws_s3_bucket.lb_logs.arn,
 		]
 	}
+}
+
+resource "aws_s3_bucket" "helm_repo" {
+	bucket = "${var.eks_cluster_name}-helm-repo"
+	acl = "public-read"
+	website {
+		index_document = "index.yaml"
+	}
+}
+
+resource "aws_s3_bucket_policy" "helm_repo" {
+	bucket = aws_s3_bucket.helm_repo.id
+	policy = data.aws_iam_policy_document.helm_repo_bucket_policy.json
+}
+
+resource "aws_s3_bucket" "lb_logs" {
+	bucket = "${var.eks_cluster_name}-lb-logs"
+	acl = "private"
+	force_destroy = true
+	server_side_encryption_configuration {
+		rule {
+			apply_server_side_encryption_by_default {
+				sse_algorithm = "AES256"
+			}
+		}
+	}
+
+	lifecycle_rule {
+		abort_incomplete_multipart_upload_days = 1
+		id = "expire"
+		enabled = true
+		expiration {
+			days = var.eks_cluster_logs_retention_days
+		}
+	}
+
+	# use versioning for production / long term use-cases, but disable
+	# for ephemeral deployments to allow `terraform destroy` to delete the bucket automatically.
+	# versioning {
+	# 	enabled = true
+	# }
 }
 
 resource "aws_s3_bucket_policy" "lb_logs" {
