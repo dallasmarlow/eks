@@ -246,6 +246,8 @@ resource "aws_vpc_endpoint" "s3" {
 	subnet_ids = [
 		aws_subnet.priv_subnet_a.id,
 		aws_subnet.priv_subnet_b.id,
+		aws_subnet.pub_subnet_a.id,
+		aws_subnet.pub_subnet_b.id,
 	]
 	tags = {
 		Name = "s3_endpoint"
@@ -259,5 +261,15 @@ resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_a" {
 
 resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_b" {
 	subnet_id = aws_subnet.priv_subnet_b.id
+	vpc_endpoint_id = aws_vpc_endpoint.s3.id
+}
+
+resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_a" {
+	subnet_id = aws_subnet.pub_subnet_a.id
+	vpc_endpoint_id = aws_vpc_endpoint.s3.id
+}
+
+resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_b" {
+	subnet_id = aws_subnet.pub_subnet_b.id
 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
 }
