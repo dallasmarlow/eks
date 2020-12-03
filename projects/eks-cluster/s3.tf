@@ -80,6 +80,7 @@ data "aws_iam_policy_document" "lb_logs_bucket_policy" {
 resource "aws_s3_bucket" "helm_repo" {
 	bucket = "${var.eks_cluster_name}-helm-repo"
 	acl = "public-read"
+	force_destroy = true
 	website {
 		index_document = "index.yaml"
 	}
