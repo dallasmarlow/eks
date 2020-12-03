@@ -235,6 +235,10 @@ resource "aws_security_group" "internal_s3_endpoint_egress" {
 
 # Endpoint
 
+data "aws_vpc_endpoint_service" "s3" {
+  service = "s3"
+}
+
 resource "aws_vpc_endpoint" "s3" {
 	vpc_id = aws_vpc.eks_test.id
 	vpc_endpoint_type   = "Interface"
@@ -242,7 +246,7 @@ resource "aws_vpc_endpoint" "s3" {
 	security_group_ids  = [
 		aws_security_group.internal_s3_endpoint_egress.id,
 	]
-	service_name = join(".", ["com.amazonaws", var.region, "s3"])
+	service_name = data.aws_vpc_endpoint_service.s3.service_name
 	subnet_ids = [
 		aws_subnet.priv_subnet_a.id,
 		aws_subnet.priv_subnet_b.id,
@@ -254,22 +258,22 @@ resource "aws_vpc_endpoint" "s3" {
 	}
 }
 
-resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_a" {
-	subnet_id = aws_subnet.priv_subnet_a.id
-	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-}
+# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_a" {
+# 	subnet_id = aws_subnet.priv_subnet_a.id
+# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
+# }
 
-resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_b" {
-	subnet_id = aws_subnet.priv_subnet_b.id
-	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-}
+# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_b" {
+# 	subnet_id = aws_subnet.priv_subnet_b.id
+# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
+# }
 
-resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_a" {
-	subnet_id = aws_subnet.pub_subnet_a.id
-	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-}
+# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_a" {
+# 	subnet_id = aws_subnet.pub_subnet_a.id
+# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
+# }
 
-resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_b" {
-	subnet_id = aws_subnet.pub_subnet_b.id
-	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-}
+# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_b" {
+# 	subnet_id = aws_subnet.pub_subnet_b.id
+# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
+# }
