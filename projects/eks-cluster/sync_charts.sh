@@ -36,6 +36,6 @@ done
 
 # index
 helm repo index .
-aws s3 cp index.yaml "s3://$S3_BUCKET/index.yaml" --acl public-read
+aws s3 cp index.yaml "s3://$S3_BUCKET/index.yaml" --acl public-read --content-type "text/yaml"
 
 cd -

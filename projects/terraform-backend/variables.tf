@@ -77,6 +77,11 @@ variable "elb_logs_s3_lifecyle_incomplete_multipart_upload_expire_days" {
 	default = 1
 }
 
+variable "helm_repo_domain" {
+	type = string
+	default = "helm.svc.cl0wn.shoes"
+}
+
 variable "helm_url" {
 	type = string
 	default = "https://get.helm.sh/helm-v3.4.1-linux-arm64.tar.gz"

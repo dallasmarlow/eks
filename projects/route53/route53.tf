@@ -12,7 +12,7 @@ resource "aws_route53_record" "bastion" {
 
 resource "aws_route53_record" "helm" {
 	zone_id = aws_route53_zone.primary.zone_id
-	name = "helm.svc.${var.route53_zone_domain}"
+	name = var.helm_repo_domain
 	type = "A"
 	alias {
 		evaluate_target_health = false
