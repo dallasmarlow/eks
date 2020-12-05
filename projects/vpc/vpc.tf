@@ -224,15 +224,6 @@ resource "aws_security_group" "internal_ssh_ingress" {
 	}
 }
 
-resource "aws_security_group" "internal_s3_endpoint_egress" {
-	name_prefix = "internal_s3_endpoint_egress"
-	vpc_id = aws_vpc.eks_test.id
-	revoke_rules_on_delete = true
-	tags = {
-		Name = "internal_s3_endpoint_egress"
-	}
-}
-
 # Endpoint
 
 data "aws_vpc_endpoint_service" "s3" {
@@ -246,9 +237,6 @@ resource "aws_vpc_endpoint" "s3" {
 	route_table_ids = [
 		aws_route_table.nat_gateway_a_egress.id,
 		aws_route_table.nat_gateway_b_egress.id,
-	]
-	security_group_ids  = [
-		aws_security_group.internal_s3_endpoint_egress.id,
 	]
 	service_name = data.aws_vpc_endpoint_service.s3.service_name
 	tags = {
