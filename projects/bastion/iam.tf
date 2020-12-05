@@ -43,6 +43,25 @@ data "aws_iam_policy_document" "s3_bastion_utils_read_only" {
 	}
 }
 
+data "aws_iam_policy_document" "s3_helm_repo_read_write" {
+	statement {
+		actions = [
+			"s3:ListBucket",
+		]
+		resources = [
+			data.terraform_remote_state.eks_cluster.outputs.s3_bucket_helm_repo_arn,
+		]
+	}
+	statement {
+		actions = [
+			"s3:*Object",
+		]
+		resources = [
+			"${data.terraform_remote_state.eks_cluster.outputs.s3_bucket_helm_repo_arn}/*",
+		]
+	}
+}
+
 resource "aws_iam_policy" "ec2_read_only" {
 	name_prefix = "bastion-ec2-read-only"
 	policy = data.aws_iam_policy_document.ec2_read_only.json
@@ -56,6 +75,11 @@ resource "aws_iam_policy" "eks_read_only" {
 resource "aws_iam_policy" "s3_bastion_utils_read_only" {
 	name_prefix = "bastion-s3-bastion-utils-read-only"
 	policy = data.aws_iam_policy_document.s3_bastion_utils_read_only.json
+}
+
+resource "aws_iam_policy" "s3_helm_repo_read_write" {
+	name_prefix = "bastion-s3-helm-repo-read-write"
+	policy = data.aws_iam_policy_document.s3_helm_repo_read_write.json
 }
 
 resource "aws_iam_role" "bastion" {
@@ -86,6 +110,11 @@ resource "aws_iam_role_policy_attachment" "bastion_eks_read_only" {
 resource "aws_iam_role_policy_attachment" "bastion_s3_bastion_utils_read_only" {
 	role = aws_iam_role.bastion.name
 	policy_arn = aws_iam_policy.s3_bastion_utils_read_only.arn
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_s3_helm_repo_read_write" {
+	role = aws_iam_role.bastion.name
+	policy_arn = aws_iam_policy.s3_helm_repo_read_write.arn
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_dynamodb_locktable" {

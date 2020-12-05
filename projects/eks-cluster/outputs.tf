@@ -26,6 +26,10 @@ output "s3_bucket_helm_repo" {
 	value = aws_s3_bucket.helm_repo.id
 }
 
+output "s3_bucket_helm_repo_arn" {
+	value = aws_s3_bucket.helm_repo.arn
+}
+
 output "s3_bucket_lb_logs" {
 	value = aws_s3_bucket.lb_logs.id
 }

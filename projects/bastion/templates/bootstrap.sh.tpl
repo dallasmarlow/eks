@@ -12,6 +12,12 @@ exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&
 region = $region
 EOL
 
+	# setup helm
+	curl -o helm.tgz ${HELM_URL} && \
+		tar xfvz helm.tgz && \
+		mv linux-*/helm /usr/local/bin && \
+		rm -rfv helm.tgz linux-*
+
 	# setup kubectl
 	curl -o /usr/local/bin/kubectl ${KUBECTL_URL}
 	chmod +x /usr/local/bin/kubectl

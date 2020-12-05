@@ -77,6 +77,12 @@ variable "elb_logs_s3_lifecyle_incomplete_multipart_upload_expire_days" {
 	default = 1
 }
 
+variable "helm_url" {
+	type = string
+	default = "https://get.helm.sh/helm-v3.4.1-linux-arm64.tar.gz"
+	# default = "https://get.helm.sh/helm-v3.4.1-linux-amd64.tar.gz"
+}
+
 variable "kubectl_url" {
 	type = string
 	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/arm64/kubectl"

@@ -17,6 +17,7 @@ resource "aws_instance" "bastion" {
 		"${path.module}/templates/bootstrap.sh.tpl",
 		{
 			CLUSTER_NAME = var.eks_cluster_name,
+			HELM_URL = var.helm_url,
 			KUBECTL_URL = var.kubectl_url,
 			S3_BUCKET = aws_s3_bucket.bastion_utils.id,
 			TERRAFORM_URL = var.terraform_url})
