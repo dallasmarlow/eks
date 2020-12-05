@@ -34,6 +34,10 @@ output "eks_test_pod_subnet_b" {
 	value = aws_subnet.pod_subnet_b.id
 }
 
+output "s3_endpoint_id" {
+	value = aws_vpc_endpoint.s3.id
+}
+
 output "ssh_external_sg_id" {
 	value = aws_security_group.external_ssh_ingress.id
 }

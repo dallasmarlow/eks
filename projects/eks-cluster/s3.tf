@@ -8,7 +8,13 @@ data "aws_iam_policy_document" "helm_repo_bucket_policy" {
 			variable = "aws:SourceIp"
 			values = [
 				var.remote_network,
-				var.eks_vpc_network,
+			]
+		}
+		condition {
+			test = "StringNotEquals"
+			variable = "aws:sourceVpce"
+			values = [
+				data.terraform_remote_state.vpc.outputs.s3_endpoint_id,
 			]
 		}
 		effect = "Deny"
