@@ -30,6 +30,14 @@ output "s3_bucket_helm_repo_arn" {
 	value = aws_s3_bucket.helm_repo.arn
 }
 
+output "s3_bucket_helm_repo_website_domain" {
+	value = aws_s3_bucket.helm_repo.website_domain
+}
+
+output "s3_bucket_helm_repo_zone_id" {
+	value = aws_s3_bucket.helm_repo.hosted_zone_id
+}
+
 output "s3_bucket_lb_logs" {
 	value = aws_s3_bucket.lb_logs.id
 }
