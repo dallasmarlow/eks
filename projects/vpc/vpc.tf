@@ -233,7 +233,6 @@ data "aws_vpc_endpoint_service" "s3" {
 resource "aws_vpc_endpoint" "s3" {
 	vpc_id = aws_vpc.eks_test.id
 	vpc_endpoint_type   = "Gateway"
-	private_dns_enabled = true
 	route_table_ids = [
 		aws_route_table.nat_gateway_a_egress.id,
 		aws_route_table.nat_gateway_b_egress.id,
