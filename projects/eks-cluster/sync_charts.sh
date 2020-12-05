@@ -11,9 +11,12 @@ for chart in "${REMOTE_CHARTS[@]}"; do
 	repo_name="$(echo $chart | cut -d '|' -f 2)"
 	chart_name="$(echo $chart | cut -d '|' -f 3)"
 	chart_version="$(echo $chart | cut -d '|' -f 4)"
-
 	chart_file="$chart_name-$chart_version.tgz"
+
+	set +e
 	remote_status="$(aws s3api head-object --bucket $S3_BUCKET --key $chart_file 2>&1)"
+	set -e
+
 	if [[ "$remote_status" =~ "Not Found" ]]; then
 		# fetch chart
 		if [[ ! -f "$chart_file" ]]; then
