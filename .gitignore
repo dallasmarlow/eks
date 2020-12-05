@@ -2,7 +2,8 @@ crash.log
 docker/aws
 errored.tfstate
 projects/eks/
-projects/eks-cluster/charts
+projects/eks-cluster/charts/*.tgz
+projects/eks-cluster/charts/index.yaml
 projects/route53/import_zone.sh
 run.sh
 terraform.tfstate
