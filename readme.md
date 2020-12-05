@@ -75,7 +75,7 @@ cd /opt/eks
 In order to use an existing route53 zone (instead of creating a new one) the route53 zone must be imported before running `tf.sh apply` or `terraform apply` in the route53 project directory.
 
 ```
-cd projects/route53
+cd /opt/eks/projects/route53
 terraform init
 terraform import aws_route53_zone.primary <zone id>
 ```
