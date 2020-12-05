@@ -6,6 +6,11 @@ RUN apt-get update && \
 	apt-get clean
 RUN pip install awscli
 
+RUN curl -o helm.tgz https://get.helm.sh/helm-v3.4.1-linux-amd64.tar.gz && \
+	tar xfvz helm.tgz && \
+	mv linux-amd64/helm /usr/local/bin && \
+	rm -rf helm.tgz linux-amd64
+
 RUN ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N ""
 
 RUN curl -o terraform.zip https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip && \
