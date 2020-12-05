@@ -21,3 +21,11 @@ output "eks_cluster_sg_id" {
 output "eks_cluster_version" {
 	value = aws_eks_cluster.eks_cluster.version
 }
+
+output "s3_bucket_helm_repo" {
+	value = aws_s3_bucket.helm_repo.id
+}
+
+output "s3_bucket_lb_logs" {
+	value = aws_s3_bucket.lb_logs.id
+}
