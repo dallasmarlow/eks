@@ -10,7 +10,7 @@ resource "aws_route53_record" "bastion" {
 	records = [data.terraform_remote_state.bastion.outputs.bastion_ip]
 }
 
-resource "aws_route53_zone" "helm" {
+resource "aws_route53_record" "helm" {
 	zone_id = aws_route53_zone.primary.zone_id
 	name = "helm.svc.${var.route53_zone_domain}"
 	type = "A"
