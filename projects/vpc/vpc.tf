@@ -243,37 +243,15 @@ resource "aws_vpc_endpoint" "s3" {
 	vpc_id = aws_vpc.eks_test.id
 	vpc_endpoint_type   = "Gateway"
 	private_dns_enabled = true
+	route_table_ids = [
+		aws_route_table.nat_gateway_a_egress.id,
+		aws_route_table.nat_gateway_b_egress.id,
+	]
 	security_group_ids  = [
 		aws_security_group.internal_s3_endpoint_egress.id,
 	]
 	service_name = data.aws_vpc_endpoint_service.s3.service_name
-	subnet_ids = [
-		aws_subnet.priv_subnet_a.id,
-		aws_subnet.priv_subnet_b.id,
-		aws_subnet.pub_subnet_a.id,
-		aws_subnet.pub_subnet_b.id,
-	]
 	tags = {
 		Name = "s3_endpoint"
 	}
 }
-
-# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_a" {
-# 	subnet_id = aws_subnet.priv_subnet_a.id
-# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-# }
-
-# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_priv_b" {
-# 	subnet_id = aws_subnet.priv_subnet_b.id
-# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-# }
-
-# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_a" {
-# 	subnet_id = aws_subnet.pub_subnet_a.id
-# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-# }
-
-# resource "aws_vpc_endpoint_subnet_association" "s3_endpoint_pub_b" {
-# 	subnet_id = aws_subnet.pub_subnet_b.id
-# 	vpc_endpoint_id = aws_vpc_endpoint.s3.id
-# }
