@@ -18,19 +18,22 @@ for chart in "${REMOTE_CHARTS[@]}"; do
 	chart_version="$(echo $chart | cut -d '|' -f 4)"
 	chart_file="$chart_name-$chart_version.tgz"
 
-	# fetch
-	if [[ ! -f "$chart_file" ]]; then
-		helm repo add "$repo_name" "$repo_url" --force-update
-		helm pull "$repo_name/$chart_name" --version "$chart_version"
-	fi
-
 	set +e
 	remote_status="$(aws s3api head-object --bucket $S3_BUCKET --key $chart_file 2>&1)"
 	set -e
 
-	# upload
+
 	if [[ "$remote_status" =~ "Not Found" ]]; then
+		# fetch
+		if [[ ! -f "$chart_file" ]]; then
+			helm repo add "$repo_name" "$repo_url" --force-update
+			helm pull "$repo_name/$chart_name" --version "$chart_version"
+		fi
+
+		# upload
 		aws s3 cp "$chart_file" "s3://$S3_BUCKET/$chart_file" --acl public-read
+	else
+		aws s3 cp "s3://$S3_BUCKET/$chart_file" .
 	fi
 done
 
