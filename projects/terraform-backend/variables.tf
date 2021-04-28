@@ -84,12 +84,16 @@ variable "helm_repo_domain" {
 
 variable "helm_url" {
 	type = string
-	default = "https://get.helm.sh/helm-v3.4.1-linux-arm64.tar.gz"
+	default = "https://get.helm.sh/helm-v3.5.4-linux-arm64.tar.gz"
+	# default = "https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz"
+	# default = "https://get.helm.sh/helm-v3.4.1-linux-arm64.tar.gz"
 	# default = "https://get.helm.sh/helm-v3.4.1-linux-amd64.tar.gz"
 }
 
 variable "kubectl_url" {
 	type = string
+	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/arm64/kubectl"
+	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
 	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/arm64/kubectl"
 	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl"
 }
@@ -112,8 +116,8 @@ variable "region" {
 
 variable "terraform_url" {
 	type = string
-	default = "https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_arm64.zip"
-	# default = "https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip"
+	default = "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_arm64.zip"
+	# default = "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip"
 }
 
 variable "remote_network" {

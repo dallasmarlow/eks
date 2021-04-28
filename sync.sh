@@ -7,7 +7,7 @@ fi
 
 BASTION_SSH_USER="${BASTION_SSH_USER:-ec2-user}"
 cd projects/bastion
-BASTION_ADDR="$(terraform output bastion_ip)"
+BASTION_ADDR="$(terraform output -json | jq -r .bastion_ip.value)"
 cd -
 
 if [[ -z $BASTION_ADDR ]]; then

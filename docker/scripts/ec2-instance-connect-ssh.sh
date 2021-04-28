@@ -45,4 +45,4 @@ aws ec2-instance-connect send-ssh-public-key \
 	--instance-id $instance_id \
 	--instance-os-user "${OS_USER}" \
 	--ssh-public-key "file://${PUBLIC_SSH_KEY}"
-ssh -Att $OS_USER@$EC2_IP "${@:2}"
+ssh -Att -l $OS_USER $EC2_IP "${@:2}"
