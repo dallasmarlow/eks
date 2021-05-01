@@ -157,4 +157,9 @@ cd /opt/eks
 kubectl get nodes
 kubectl get pods --all-namespaces
 kubectl cluster-info dump
+
+kubectl get eniconfigs -o yaml
+kubectl get ingress --all-namespaces
+kubectl logs -n kube-system deployment.apps/aws-load-balancer-controller
+kubectl run -it --rm --image=debian util
 ```

@@ -11,9 +11,12 @@ terraform {
 			source = "gavinbunney/kubectl"
 			version = ">= 1.7.0"
 		}
+		kubernetes-alpha = {
+			version = "~> 0.2.1"
+		}
 	}
 
-	required_version = ">= 0.13"
+	required_version = ">= 0.14"
 }
 
 data "terraform_remote_state" "bastion" {

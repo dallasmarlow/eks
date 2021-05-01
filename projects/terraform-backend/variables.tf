@@ -25,7 +25,7 @@ variable "ec2_user" {
 
 variable "eks_version" {
 	type = string
-	default = "1.18"
+	default = "1.19"
 }
 
 variable "eks_cluster_logs_retention_days" {
@@ -92,9 +92,9 @@ variable "helm_url" {
 
 variable "kubectl_url" {
 	type = string
-	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/arm64/kubectl"
+	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/arm64/kubectl"
 	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
-	default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/arm64/kubectl"
+	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/arm64/kubectl"
 	# default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl"
 }
 

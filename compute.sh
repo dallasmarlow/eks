@@ -12,7 +12,7 @@ if [[ -z $1 ]]; then
 fi
 
 cd projects/eks-compute
-ASG_NAME=$(terraform output $OUTPUT_KEY)
+ASG_NAME=$(terraform output -json | jq -r ".${OUTPUT_KEY}.value")
 cd -
 
 if [[ -z $ASG_NAME ]]; then
