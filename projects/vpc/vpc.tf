@@ -1,245 +1,186 @@
-resource "aws_vpc" "eks_test" {
-	cidr_block = var.eks_vpc_network
-	enable_dns_support = true
-	enable_dns_hostnames = true
-	tags = {
-		Name = "eks_test"
-	}
+locals {
+  azs = slice(data.aws_availability_zones.azs.names, 0, var.availability_zones)
+  primary_network_k8s_tags = {
+    "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"               = 1
+  }
+  public_network_k8s_tags = {
+    "kubernetes.io/role/elb" = 1
+  }
 }
 
-resource "aws_subnet" "priv_subnet_a" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.eks_priv_subnet_a_network
-	availability_zone = "${var.region}a"
-	tags = {
-		Name = "eks_test_priv_a"
-		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-		# "kubernetes.io/role/internal-elb" = 1
-	}
+resource "aws_vpc" "primary" {
+  cidr_block           = var.eks_vpc_network
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "${var.eks_cluster_name}-primary"
+  }
 }
 
-resource "aws_subnet" "priv_subnet_b" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.eks_priv_subnet_b_network
-	availability_zone = "${var.region}b"
-	tags = {
-		Name = "eks_test_priv_b"
-		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-		# "kubernetes.io/role/internal-elb" = 1
-	}
+resource "aws_subnet" "primary" {
+  count = length(local.azs)
+
+  availability_zone = local.azs[count.index]
+  cidr_block        = var.eks_primary_networks[count.index]
+  vpc_id            = aws_vpc.primary.id
+
+  tags = merge(
+    local.primary_network_k8s_tags,
+    { Name = "${var.eks_cluster_name}-primary-${local.azs[count.index]}" },
+  )
 }
 
-resource "aws_subnet" "pub_subnet_a" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.eks_pub_subnet_a_network
-	availability_zone = "${var.region}a"
-	map_public_ip_on_launch = true
-	tags = {
-		Name = "eks_test_pub_a"
-		"kubernetes.io/role/elb" = 1
-	}
-}
+resource "aws_subnet" "public" {
+  count = length(local.azs)
 
-resource "aws_subnet" "pub_subnet_b" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.eks_pub_subnet_b_network
-	availability_zone = "${var.region}b"
-	map_public_ip_on_launch = true
-	tags = {
-		Name = "eks_test_pub_b"
-		"kubernetes.io/role/elb" = 1
-	}
+  availability_zone = local.azs[count.index]
+  cidr_block        = var.eks_public_networks[count.index]
+  vpc_id            = aws_vpc.primary.id
+
+  tags = merge(
+    local.public_network_k8s_tags,
+    { Name = "${var.eks_cluster_name}-public-${local.azs[count.index]}" },
+  )
 }
 
 # K8S pod network
 
 resource "aws_vpc_ipv4_cidr_block_association" "k8s_pod_network" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.k8s_pod_network
+  vpc_id     = aws_vpc.primary.id
+  cidr_block = var.k8s_pod_network
 }
 
-resource "aws_subnet" "pod_subnet_a" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.k8s_pod_subnet_a_network
-	availability_zone = "${var.region}a"
-	depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
-	tags = {
-		Name = "eks_test_pod_a"
-		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-		"kubernetes.io/role/internal-elb" = 1
-	}
-}
+resource "aws_subnet" "pod" {
+  count      = length(local.azs)
+  depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
 
-resource "aws_subnet" "pod_subnet_b" {
-	vpc_id = aws_vpc.eks_test.id
-	cidr_block = var.k8s_pod_subnet_b_network
-	availability_zone = "${var.region}b"
-	depends_on = [aws_vpc_ipv4_cidr_block_association.k8s_pod_network]
-	tags = {
-		Name = "eks_test_pod_b"
-		"kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-		"kubernetes.io/role/internal-elb" = 1
-	}
+  availability_zone = local.azs[count.index]
+  cidr_block        = var.k8s_pod_networks[count.index]
+  vpc_id            = aws_vpc.primary.id
+
+  tags = {
+    Name = "${var.eks_cluster_name}-pod-${local.azs[count.index]}"
+  }
 }
 
 # Internet Gateway
 
 resource "aws_internet_gateway" "ig" {
-	vpc_id = aws_vpc.eks_test.id
-	tags = {
-		Name = "eks_test_ig"
-	}
-}
-
-resource "aws_route_table" "ig_egress" {
-	vpc_id = aws_vpc.eks_test.id
-	route {
-		cidr_block = "0.0.0.0/0"
-		gateway_id = aws_internet_gateway.ig.id
-	}
-	tags = {
-		Name = "eks_test_ig_egress"
-	}
-}
-
-resource "aws_route_table_association" "pub_subnet_a" {
-	subnet_id = aws_subnet.pub_subnet_a.id
-	route_table_id = aws_route_table.ig_egress.id
-}
-
-resource "aws_route_table_association" "pub_subnet_b" {
-	subnet_id = aws_subnet.pub_subnet_b.id
-	route_table_id = aws_route_table.ig_egress.id
+  vpc_id = aws_vpc.primary.id
+  tags = {
+    Name = "${var.eks_cluster_name}-ig"
+  }
 }
 
 # NAT gateways
 
-resource "aws_eip" "nat_gateway_a" {
-	vpc = true
-	tags = {
-		Name = "eks_test_nat_gateway_a"
-	}
+resource "aws_eip" "nat_gateway" {
+  count = length(local.azs)
+  vpc   = true
+  tags = {
+    Name = "${var.eks_cluster_name}-nat-gateway-${local.azs[count.index]}"
+  }
 }
 
-resource "aws_eip" "nat_gateway_b" {
-	vpc = true
-	tags = {
-		Name = "eks_test_nat_gateway_b"
-	}
-}
+resource "aws_nat_gateway" "nat_gateway" {
+  count      = length(local.azs)
+  depends_on = [aws_internet_gateway.ig]
 
-resource "aws_nat_gateway" "nat_gateway_a" {
-	allocation_id = aws_eip.nat_gateway_a.id
-	subnet_id = aws_subnet.pub_subnet_a.id
-	depends_on = [aws_internet_gateway.ig]
-	tags = {
-		Name = "eks_test_nat_gateway_a"
-	}
-}
-
-resource "aws_nat_gateway" "nat_gateway_b" {
-	allocation_id = aws_eip.nat_gateway_b.id
-	subnet_id = aws_subnet.pub_subnet_b.id
-	depends_on = [aws_internet_gateway.ig]
-	tags = {
-		Name = "eks_test_nat_gateway_b"
-	}
+  allocation_id = aws_eip.nat_gateway[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+  tags = {
+    Name = "${var.eks_cluster_name}-nat-gateway-${local.azs[count.index]}"
+  }
 }
 
 # Routing
 
-resource "aws_route_table" "nat_gateway_a_egress" {
-	vpc_id = aws_vpc.eks_test.id
-	route {
-		cidr_block = "0.0.0.0/0"
-		nat_gateway_id = aws_nat_gateway.nat_gateway_a.id
-	}
-	tags = {
-		Name = "eks_test_nat_gateway_a_egress"
-	}
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.primary.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.ig.id
+  }
+  tags = {
+    Name = "${var.eks_cluster_name}-public"
+  }
 }
 
-resource "aws_route_table" "nat_gateway_b_egress" {
-	vpc_id = aws_vpc.eks_test.id
-	route {
-		cidr_block = "0.0.0.0/0"
-		nat_gateway_id = aws_nat_gateway.nat_gateway_b.id
-	}
-	tags = {
-		Name = "eks_test_nat_gateway_b_egress"
-	}
+resource "aws_route_table_association" "public" {
+  count          = length(local.azs)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table_association" "priv_subnet_a" {
-	subnet_id = aws_subnet.priv_subnet_a.id
-	route_table_id = aws_route_table.nat_gateway_a_egress.id
+resource "aws_route_table" "primary" {
+  count  = length(local.azs)
+  vpc_id = aws_vpc.primary.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway[count.index].id
+  }
+  tags = {
+    Name = "${var.eks_cluster_name}-primary-${local.azs[count.index]}"
+  }
 }
 
-resource "aws_route_table_association" "priv_subnet_b" {
-	subnet_id = aws_subnet.priv_subnet_b.id
-	route_table_id = aws_route_table.nat_gateway_b_egress.id
+resource "aws_route_table_association" "primary" {
+  count          = length(local.azs)
+  subnet_id      = aws_subnet.primary[count.index].id
+  route_table_id = aws_route_table.primary[count.index].id
 }
 
-resource "aws_route_table_association" "pod_subnet_a" {
-	subnet_id = aws_subnet.pod_subnet_a.id
-	route_table_id = aws_route_table.nat_gateway_a_egress.id
-}
-
-resource "aws_route_table_association" "pod_subnet_b" {
-	subnet_id = aws_subnet.pod_subnet_b.id
-	route_table_id = aws_route_table.nat_gateway_b_egress.id
+resource "aws_route_table_association" "pod" {
+  count          = length(local.azs)
+  subnet_id      = aws_subnet.pod[count.index].id
+  route_table_id = aws_route_table.primary[count.index].id
 }
 
 # SSH Security Groups
 
-resource "aws_security_group" "external_ssh_ingress" {
-	name_prefix = "external_ssh_ingress"
-	vpc_id = aws_vpc.eks_test.id
-	ingress {
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = [
-			var.remote_network,
-		]
-	}
-	revoke_rules_on_delete = true
-	tags = {
-		Name = "external_ssh_ingress"
-	}
-}
+# resource "aws_security_group" "external_ssh" {
+#   name_prefix = "${var.eks_cluster_name}-external-ssh-"
+#   vpc_id      = aws_vpc.primary.id
+#   ingress {
+#     from_port = 22
+#     to_port   = 22
+#     protocol  = "tcp"
+#     cidr_blocks = [
+#       var.remote_network,
+#     ]
+#   }
+#   revoke_rules_on_delete = true
+#   tags = {
+#     Name = "${var.eks_cluster_name}-external-ssh"
+#   }
+# }
 
-resource "aws_security_group" "internal_ssh_ingress" {
-	name_prefix = "internal_ssh_ingress"
-	vpc_id = aws_vpc.eks_test.id
-	ingress {
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		self = true
-	}
-	revoke_rules_on_delete = true
-	tags = {
-		Name = "internal_ssh_ingress"
-	}
-}
+# resource "aws_security_group" "internal_ssh" {
+#   name_prefix = "${var.eks_cluster_name}-internal-ssh-"
+#   vpc_id      = aws_vpc.primary.id
+#   ingress {
+#     from_port = 22
+#     to_port   = 22
+#     protocol  = "tcp"
+#     self      = true
+#   }
+#   revoke_rules_on_delete = true
+#   tags = {
+#     Name = "${var.eks_cluster_name}-internal-ssh"
+#   }
+# }
 
 # Endpoint
 
-data "aws_vpc_endpoint_service" "s3" {
-	service = "s3"
-	service_type = "Gateway"
-}
+# data "aws_vpc_endpoint_service" "s3" {
+# 	service = "s3"
+# 	service_type = "Gateway"
+# }
 
-resource "aws_vpc_endpoint" "s3" {
-	vpc_id = aws_vpc.eks_test.id
-	vpc_endpoint_type   = "Gateway"
-	route_table_ids = [
-		aws_route_table.nat_gateway_a_egress.id,
-		aws_route_table.nat_gateway_b_egress.id,
-	]
-	service_name = data.aws_vpc_endpoint_service.s3.service_name
-	tags = {
-		Name = "s3_endpoint"
-	}
-}
+# resource "aws_vpc_endpoint" "s3" {
+# 	vpc_id = aws_vpc.primary.id
+# 	vpc_endpoint_type   = "Gateway"
+# 	route_table_ids = []
+# 	service_name = data.aws_vpc_endpoint_service.s3.service_name
+# }
