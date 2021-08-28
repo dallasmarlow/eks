@@ -1,15 +1,15 @@
-output "bastion_instance_id" {
-	value = aws_instance.bastion.id
+output "instance_id" {
+  value = aws_instance.bastion.id
 }
 
-output "bastion_ip" {
-	value = aws_eip.bastion.public_ip
+output "eip" {
+  value = aws_eip.bastion.public_ip
 }
 
-output "bastion_security_group_id" {
-	value = aws_security_group.bastion.id
+output "security_group_id" {
+  value = aws_security_group.bastion.id
 }
 
-output "bastion_role_arn" {
-	value = aws_iam_role.bastion.arn
+output "role_arn" {
+  value = aws_iam_role.bastion.arn
 }

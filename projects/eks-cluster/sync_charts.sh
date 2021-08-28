@@ -4,7 +4,7 @@ REMOTE_CHARTS=(
 	"https://aws.github.io/eks-charts/|eks|aws-load-balancer-controller|1.1.0"
 	"https://kubernetes.github.io/dashboard/|kubernetes-dashboard|kubernetes-dashboard|3.0.0"
 )
-S3_BUCKET=$(terraform output s3_bucket_helm_repo)
+S3_BUCKET=$(terraform output -json | jq -r .s3_bucket_helm_repo.value)
 
 if [[ ! -d "./charts" ]]; then
 	mkdir charts
