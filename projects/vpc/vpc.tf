@@ -7,6 +7,10 @@ locals {
   public_network_k8s_tags = {
     "kubernetes.io/role/elb" = 1
   }
+  vpc_gateway_endpoints = toset([
+    "dynamodb",
+    "s3",
+  ])
 }
 
 resource "aws_vpc" "primary" {
@@ -137,50 +141,15 @@ resource "aws_route_table_association" "pod" {
   route_table_id = aws_route_table.primary[count.index].id
 }
 
-# SSH Security Groups
+# VPC endpoints
 
-# resource "aws_security_group" "external_ssh" {
-#   name_prefix = "${var.eks_cluster_name}-external-ssh-"
-#   vpc_id      = aws_vpc.primary.id
-#   ingress {
-#     from_port = 22
-#     to_port   = 22
-#     protocol  = "tcp"
-#     cidr_blocks = [
-#       var.remote_network,
-#     ]
-#   }
-#   revoke_rules_on_delete = true
-#   tags = {
-#     Name = "${var.eks_cluster_name}-external-ssh"
-#   }
-# }
-
-# resource "aws_security_group" "internal_ssh" {
-#   name_prefix = "${var.eks_cluster_name}-internal-ssh-"
-#   vpc_id      = aws_vpc.primary.id
-#   ingress {
-#     from_port = 22
-#     to_port   = 22
-#     protocol  = "tcp"
-#     self      = true
-#   }
-#   revoke_rules_on_delete = true
-#   tags = {
-#     Name = "${var.eks_cluster_name}-internal-ssh"
-#   }
-# }
-
-# Endpoint
-
-# data "aws_vpc_endpoint_service" "s3" {
-# 	service = "s3"
-# 	service_type = "Gateway"
-# }
-
-# resource "aws_vpc_endpoint" "s3" {
-# 	vpc_id = aws_vpc.primary.id
-# 	vpc_endpoint_type   = "Gateway"
-# 	route_table_ids = []
-# 	service_name = data.aws_vpc_endpoint_service.s3.service_name
-# }
+resource "aws_vpc_endpoint" "gateway_endpoints" {
+  for_each = local.vpc_gateway_endpoints
+  route_table_ids = concat(
+    [aws_route_table.public.id],
+    [for t in aws_route_table.primary : t.id],
+  )
+  service_name      = data.aws_vpc_endpoint_service.gateway_endpoints[each.key].service_name
+  vpc_endpoint_type = "Gateway"
+  vpc_id            = aws_vpc.primary.id
+}

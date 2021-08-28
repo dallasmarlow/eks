@@ -6,6 +6,10 @@ output "vpc_arn" {
   value = aws_vpc.primary.arn
 }
 
+output "s3_endpoint_id" {
+  value = aws_vpc_endpoint.gateway_endpoints["s3"].id
+}
+
 # output "eks_test_vpc_network" {
 # 	value = aws_vpc.eks_test.cidr_block
 # }
