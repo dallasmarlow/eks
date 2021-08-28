@@ -10,6 +10,12 @@ output "s3_endpoint_id" {
   value = aws_vpc_endpoint.gateway_endpoints["s3"].id
 }
 
+output "primary_subnet_ids" {
+  value = [
+    for s in aws_subnet.primary : s.id
+  ]
+}
+
 # output "eks_test_vpc_network" {
 # 	value = aws_vpc.eks_test.cidr_block
 # }
