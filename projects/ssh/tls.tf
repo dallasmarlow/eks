@@ -1,3 +1,3 @@
-resource "tls_private_key" "eks_test" {
-	algorithm = "RSA"
+resource "tls_private_key" "primary" {
+  algorithm = "RSA"
 }

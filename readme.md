@@ -1,33 +1,47 @@
 ## Docker
 
-While not a technical requirement, interactions with this deployment are assumed to be performed within the docker container defined within this repo. This includes terraform executions and bastion ssh sessions.
+While not a technical requirement, interactions with this deployment are assumed to be performed within the management docker container defined within this repo. This includes terraform executions and bastion ssh sessions.
 
 ```
 # build
-docker build -t eks -f docker/Dockerfile docker
+docker build -t eks-mgmt -f docker/Dockerfile docker
 
 # run
-docker run -it --rm -v $HOME/.aws:/root/.aws -v $(pwd):/opt/eks eks
+docker run -it --rm -v $HOME/.aws:/root/.aws -v $(pwd):/opt/eks eks-mgmt
 ```
 
 Alternatively AWS credentials can be setup w/i the docker directory in the event that a user does not want to expose credentials from `$HOME/.aws`.
 
 ```
 # build
-docker build -t eks -f docker/Dockerfile docker
+docker build -t eks-mgmt -f docker/Dockerfile docker
 
 # configure AWS CLI credentials (one-time setup)
-docker run -it --rm -v $(pwd)/docker/aws:/root/.aws eks aws configure
+docker run -it --rm -v $(pwd)/docker/aws:/root/.aws eks-mgmt aws configure
 
 # run
-docker run -it --rm -v $(pwd)/docker/aws:/root/.aws -v $(pwd):/opt/eks eks
+docker run -it --rm -v $(pwd)/docker/aws:/root/.aws -v $(pwd):/opt/eks eks-mgmt
 ```
 
 Once you have identified the docker run command that works for your setup, create a `run.sh` script which includes both the docker build and run commands to be used as part of your normal workflow.
 
+Example:
+```
+#!/usr/bin/env bash
+set -e
+docker build -t eks-mgmt -f docker/Dockerfile docker
+docker run -it \
+	--rm \
+	--network=host \
+	-e EKS_MGMT=1 \
+	-v $(pwd):/opt/eks \
+	-v $HOME/.aws:/root/.aws \
+	eks-mgmt
+```
+
 ## Provisioning
 
-The terraform projects have dependencies on output values between each other which requires that they be applied in a specific order. The `terraform-backend` project manages the S3 bucket used as a tf backend for all projects in this deployment as well as the DynamoDB lock table. The contents of `backend.tf` should be commented out for the first `terraform init` and `terraform apply` executions so the backend resources can created. Once the S3 bucket and DynamoDB table have been created uncomment the contents of `backend.tf` and run `terraform init` and confirm that the local state should be imported to the S3 backend. The following projects should be applied locally in the defined order using the instructions listed above:
+The terraform projects have dependencies on output values between each other which require that they be applied in a specific order. The `terraform-backend` project manages the S3 bucket used as a tf backend db for all projects in this deployment as well as the DynamoDB lock table. The contents of `backend.tf` should be dereferenced for the first `terraform init` and `terraform apply` executions so the backend resources can be created. Once the S3 bucket and DynamoDB table have been created uncomment the contents of `backend.tf` and run `terraform init` and confirm that the local state should be imported to the S3 backend when prompt. The following projects should be applied locally in the defined order using the instructions listed above:
 
 - `terraform-backend`
 - `vpc`
@@ -161,5 +175,5 @@ kubectl cluster-info dump
 kubectl get eniconfigs -o yaml
 kubectl get ingress --all-namespaces
 kubectl logs -n kube-system deployment.apps/aws-load-balancer-controller
-kubectl run -it --rm --image=debian util
+kubectl run -it --rm --image=debian:buster-slim util
 ```

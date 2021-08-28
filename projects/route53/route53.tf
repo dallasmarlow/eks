@@ -7,7 +7,7 @@ resource "aws_route53_record" "bastion" {
 	name    = "bastion.svc.${var.route53_zone_domain}"
 	type    = "A"
 	ttl     = "300"
-	records = [data.terraform_remote_state.bastion.outputs.bastion_ip]
+	records = [data.terraform_remote_state.bastion.outputs.eip]
 }
 
 resource "aws_route53_record" "helm" {
