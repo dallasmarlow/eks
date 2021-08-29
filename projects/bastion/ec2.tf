@@ -16,7 +16,7 @@ resource "aws_instance" "bastion" {
     encrypted   = true
     kms_key_id  = aws_kms_key.bastion_ebs.arn
   }
-  subnet_id = data.terraform_remote_state.vpc.outputs.primary_subnet_ids[0]
+  subnet_id = data.terraform_remote_state.vpc.outputs.public_subnet_ids[0]
   user_data = templatefile(
     "${path.module}/templates/bootstrap.sh.tpl",
     {
