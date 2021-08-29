@@ -47,9 +47,16 @@ else # apply
 	for project in ${projects[@]}; do
 		echo "applying project: ${project}"
 		cd projects/$project
-		terraform init
-		terraform plan
-		terraform apply -auto-approve -compact-warnings
+		terraform init -input=false
+		terraform validate
+		set +e
+		terraform plan -detailed-exitcode -input=false
+		if [ $? -eq 2 ]; then
+			set -e
+			terraform apply -auto-approve -compact-warnings -input=false
+		else
+			set -e
+		fi
 		cd -
 	done
 fi

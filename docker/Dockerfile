@@ -1,5 +1,7 @@
 FROM debian:buster-slim
 
+ENV EKS_MGMT 1
+
 RUN apt-get update && \
 	apt-get install -y \
 	curl dnsutils git groff jq less python-pip ssh vim zip && \

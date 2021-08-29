@@ -39,9 +39,9 @@ docker run -it \
 	eks-mgmt
 ```
 
-## Provisioning
+## Provisioning AWS Resources
 
-The terraform projects have dependencies on output values between each other which require that they be applied in a specific order. The `terraform-backend` project manages the S3 bucket used as a tf backend db for all projects in this deployment as well as the DynamoDB lock table. The contents of `backend.tf` should be dereferenced for the first `terraform init` and `terraform apply` executions so the backend resources can be created. Once the S3 bucket and DynamoDB table have been created uncomment the contents of `backend.tf` and run `terraform init` and confirm that the local state should be imported to the S3 backend when prompt. The following projects should be applied locally in the defined order using the instructions listed above:
+The AWS resource terraform projects have dependencies on output values between each other which require that they be applied in a specific order. The `terraform-backend` project manages the S3 bucket used as a tf backend db for all projects in this deployment as well as the DynamoDB lock table. The contents of `backend.tf` should be dereferenced for the first `terraform init` and `terraform apply` executions so the backend resources can be created. Once the S3 bucket and DynamoDB table have been created uncomment the contents of `backend.tf` and run `terraform init` and confirm that the local state should be imported to the S3 backend when prompt. The following projects should be applied locally in the defined order using the instructions listed above:
 
 - `terraform-backend`
 - `vpc`
