@@ -33,7 +33,6 @@ docker build -t eks-mgmt -f docker/Dockerfile docker
 docker run -it \
 	--rm \
 	--network=host \
-	-e EKS_MGMT=1 \
 	-v $(pwd):/opt/eks \
 	-v $HOME/.aws:/root/.aws \
 	eks-mgmt

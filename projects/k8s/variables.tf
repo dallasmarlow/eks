@@ -25,9 +25,21 @@ variable "kubernetes_dashboard_chart_version" {
 	default = "3.0.0"
 }
 
+variable "kubernetes_dashboard_helm_repository" {
+	type = string
+	default = "http://helm.svc.cl0wn.shoes/"
+	# default = "https://kubernetes.github.io/dashboard/"
+}
+
 variable "lb_controller_chart_version" {
 	type = string
-	default = "1.0.8"
+	default = "1.1.0"
+}
+
+variable "lb_controller_helm_repository" {
+	type = string
+	default = "http://helm.svc.cl0wn.shoes/"
+	# default = "https://aws.github.io/eks-charts/"
 }
 
 variable "lb_controller_service_account_name" {

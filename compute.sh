@@ -2,7 +2,7 @@
 set -e
 DATE_FMT="%Y-%m-%dT%H:%M:%SZ"
 MIN_ASG_INSTANCES=${MIN_ASG_INSTANCES:-0}
-OUTPUT_KEY=${OUTPUT_KEY:-eks_compute_asg_name}
+OUTPUT_KEY=${OUTPUT_KEY:-asg_name}
 REFRESH_WARMUP_INTERVAL=${REFRESH_WARMUP_INTERVAL:-60}
 COMPUTE_USAGE="usage: $0 <activity|describe|refresh|scale <num_instances>|scale-interval <num_instances> <hours>>"
 
