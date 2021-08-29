@@ -1,3 +1,9 @@
+output "pod_subnet_ids" {
+  value = [
+    for s in aws_subnet.pod : s.id
+  ]
+}
+
 output "primary_subnet_ids" {
   value = [
     for s in aws_subnet.primary : s.id

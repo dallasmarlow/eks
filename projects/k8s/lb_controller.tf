@@ -26,7 +26,7 @@ resource "helm_release" "lb_controller" {
 	wait = false # this chart always timesouts when deployed
 	set {
 		name = "clusterName"
-		value = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_name
+		value = data.terraform_remote_state.eks_cluster.outputs.cluster_name
 	}
 	set {
 		name = "region"
@@ -42,7 +42,7 @@ resource "helm_release" "lb_controller" {
 	}
 	set {
 		name = "vpcId"
-		value = data.terraform_remote_state.vpc.outputs.eks_test_vpc_id
+		value = data.terraform_remote_state.vpc.outputs.vpc_id
 	}
 	depends_on = [
 		kubernetes_manifest.lb_controller_service_account,

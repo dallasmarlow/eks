@@ -96,7 +96,7 @@ terraform import aws_route53_zone.primary <zone id>
 
 ## Provisioning K8S resources
 
-Once all AWS terraform resources have been created (via `tf.sh apply` or manually using instructions above) some initial setup steps are required to setup K8S level authentication. Kubelet hosts will not be able to join the cluster and other admin IAM roles will not be able to access the K8S control plane API until a `aws_auth` ConfigMap is configured. Below is an example of how to perform the initial setup using the `eks` management container and bastion EC2 host:
+Once all AWS terraform resources have been created (via `tf.sh apply` or manually using instructions above) some initial setup steps are required to setup K8S level authentication. Kubelet hosts will not be able to join the cluster and other admin IAM roles will not be able to access the K8S control plane API until a K8S `aws_auth` ConfigMap is configured. Below is an example of how to perform the initial setup using the `eks-mgmt` management container and bastion EC2 host:
 
 ```
 # start eks management docker container

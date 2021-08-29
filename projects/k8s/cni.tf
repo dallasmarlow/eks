@@ -15,9 +15,9 @@ resource "kubernetes_manifest" "cni_pod_network_a_eni_cfg_crd" {
 			name = "${var.region}a"
 		}
 		spec = {
-			subnet = data.terraform_remote_state.vpc.outputs.eks_test_pod_subnet_a
+			subnet = data.terraform_remote_state.vpc.outputs.pod_subnet_ids[0]
 			securityGroups = [
-				data.terraform_remote_state.eks_compute.outputs.eks_compute_sg,
+				data.terraform_remote_state.eks_compute.outputs.sg,
 			]
 		}
 	}
@@ -32,9 +32,9 @@ resource "kubernetes_manifest" "cni_pod_network_b_eni_cfg_crd" {
 			name = "${var.region}b"
 		}
 		spec = {
-			subnet = data.terraform_remote_state.vpc.outputs.eks_test_pod_subnet_b
+			subnet = data.terraform_remote_state.vpc.outputs.pod_subnet_ids[1]
 			securityGroups = [
-				data.terraform_remote_state.eks_compute.outputs.eks_compute_sg,
+				data.terraform_remote_state.eks_compute.outputs.sg,
 			]
 		}
 	}
