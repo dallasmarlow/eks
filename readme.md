@@ -4,7 +4,7 @@ While not a technical requirement, interactions with this deployment are assumed
 
 ```
 # build
-docker build -t eks-mgmt -f docker/Dockerfile docker
+docker build -t eks-mgmt -f docker/Dockerfile
 
 # run
 docker run -it --rm -v $HOME/.aws:/root/.aws -v $(pwd):/opt/eks eks-mgmt
