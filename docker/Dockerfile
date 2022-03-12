@@ -4,9 +4,9 @@ ENV EKS_MGMT 1
 
 RUN apt-get update && \
 	apt-get install -y \
-	curl dnsutils git groff jq less python-pip ssh vim zip && \
+	curl dnsutils git groff jq less python3-pip ssh vim zip && \
 	apt-get clean
-RUN pip install awscli
+RUN pip3 install awscli
 
 # RUN curl -o helm.tgz https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz && \
 # 	tar xfvz helm.tgz && \
