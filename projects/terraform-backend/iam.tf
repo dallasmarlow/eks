@@ -19,8 +19,8 @@ data "aws_iam_policy_document" "terraform_s3_backend" {
       "s3:PutObject",
     ]
     resources = [
-      aws_s3_bucket.terraform-backend.arn,
-      "${aws_s3_bucket.terraform-backend.arn}/*"
+      aws_s3_bucket.terraform_backend.arn,
+      "${aws_s3_bucket.terraform_backend.arn}/*"
     ]
   }
 }
