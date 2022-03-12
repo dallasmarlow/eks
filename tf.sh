@@ -35,7 +35,7 @@ elif [[ $1 = "destroy" ]]; then
 		# retain route53 zone
 		if [[ $project = "route53" ]]; then
 			terraform destroy -auto-approve -target aws_route53_record.bastion
-			terraform destroy -auto-approve -target aws_route53_record.helm
+			# terraform destroy -auto-approve -target aws_route53_record.helm
 		else
 			terraform destroy -auto-approve
 		fi
@@ -47,7 +47,7 @@ else # apply
 	for project in ${projects[@]}; do
 		echo "applying project: ${project}"
 		cd projects/$project
-		terraform init -input=false
+		terraform init -input=false -upgrade
 		terraform validate
 		set +e
 		terraform plan -detailed-exitcode -input=false
