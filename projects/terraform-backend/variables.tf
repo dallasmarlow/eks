@@ -30,7 +30,7 @@ variable "ec2_user" {
 
 variable "eks_version" {
   type    = string
-  default = "1.19"
+  default = "1.21"
 }
 
 variable "eks_cluster_logs_retention_days" {
@@ -95,8 +95,7 @@ variable "helm_url" {
 
 variable "kubectl_url" {
   type    = string
-  default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/arm64/kubectl"
-  # default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
+  default = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.5/2022-01-21/bin/linux/arm64/kubectl"
 }
 
 # this value needs to be computed based on the instance type, due to the custom CNI pod networking
@@ -117,8 +116,7 @@ variable "region" {
 
 variable "terraform_url" {
   type    = string
-  default = "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_arm64.zip"
-  # default = "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_arm64.zip"
 }
 
 variable "remote_network" {

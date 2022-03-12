@@ -65,239 +65,239 @@
 # 	}
 # }
 
-resource "kubectl_manifest" "metrics_server_api_service" {
-	yaml_body = file("${path.module}/manifests/metrics-server/api_service_0_3_7.yaml")
-}
+# resource "kubectl_manifest" "metrics_server_api_service" {
+# 	yaml_body = file("${path.module}/manifests/metrics-server/api_service_0_3_7.yaml")
+# }
 
-resource "kubectl_manifest" "metrics_server_service" {
-	yaml_body = file("${path.module}/manifests/metrics-server/service_0_3_7.yaml")
-}
+# resource "kubectl_manifest" "metrics_server_service" {
+# 	yaml_body = file("${path.module}/manifests/metrics-server/service_0_3_7.yaml")
+# }
 
-resource "kubernetes_manifest" "metrics_server_service_account" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "v1"
-		kind = "ServiceAccount"
-		metadata = {
-			name = "metrics-server"
-			namespace = "kube-system"
-		}
-	}
-}
+# resource "kubernetes_manifest" "metrics_server_service_account" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "v1"
+# 		kind = "ServiceAccount"
+# 		metadata = {
+# 			name = "metrics-server"
+# 			namespace = "kube-system"
+# 		}
+# 	}
+# }
 
-resource "kubernetes_manifest" "metrics_server_cluster_role" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "rbac.authorization.k8s.io/v1"
-		kind = "ClusterRole"
-		metadata = {
-			name = "system:metrics-server"
-		}
-		rules = [
-			{
-				apiGroups = [
-					"",
-				]
-				resources = [
-					"pods",
-					"nodes",
-					"nodes/stats",
-					"namespaces",
-					"configmaps",
-				]
-				verbs = [
-					"get",
-					"list",
-					"watch",
-				]
-			},
-		]
-	}
-}
+# resource "kubernetes_manifest" "metrics_server_cluster_role" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "rbac.authorization.k8s.io/v1"
+# 		kind = "ClusterRole"
+# 		metadata = {
+# 			name = "system:metrics-server"
+# 		}
+# 		rules = [
+# 			{
+# 				apiGroups = [
+# 					"",
+# 				]
+# 				resources = [
+# 					"pods",
+# 					"nodes",
+# 					"nodes/stats",
+# 					"namespaces",
+# 					"configmaps",
+# 				]
+# 				verbs = [
+# 					"get",
+# 					"list",
+# 					"watch",
+# 				]
+# 			},
+# 		]
+# 	}
+# }
 
-resource "kubernetes_manifest" "metrics_server_cluster_role_metrics_reader" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "rbac.authorization.k8s.io/v1"
-		kind = "ClusterRole"
-		metadata = {
-			labels = {
-				"k8s-app": "metrics-server"
-				"rbac.authorization.k8s.io/aggregate-to-admin": "true"
-				"rbac.authorization.k8s.io/aggregate-to-edit": "true"
-				"rbac.authorization.k8s.io/aggregate-to-view": "true"
-			}
-			name = "system:aggregated-metrics-reader"
-		}
-		rules = [
-			{
-				apiGroups = [
-					"metrics.k8s.io",
-				]
-				resources = [
-					"pods",
-					"nodes",
-				]
-				verbs = [
-					"get",
-					"list",
-					"watch",
-				]
-			},
-		]
-	}
-}
+# resource "kubernetes_manifest" "metrics_server_cluster_role_metrics_reader" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "rbac.authorization.k8s.io/v1"
+# 		kind = "ClusterRole"
+# 		metadata = {
+# 			labels = {
+# 				"k8s-app": "metrics-server"
+# 				"rbac.authorization.k8s.io/aggregate-to-admin": "true"
+# 				"rbac.authorization.k8s.io/aggregate-to-edit": "true"
+# 				"rbac.authorization.k8s.io/aggregate-to-view": "true"
+# 			}
+# 			name = "system:aggregated-metrics-reader"
+# 		}
+# 		rules = [
+# 			{
+# 				apiGroups = [
+# 					"metrics.k8s.io",
+# 				]
+# 				resources = [
+# 					"pods",
+# 					"nodes",
+# 				]
+# 				verbs = [
+# 					"get",
+# 					"list",
+# 					"watch",
+# 				]
+# 			},
+# 		]
+# 	}
+# }
 
-resource "kubernetes_manifest" "metrics_server_role_binding_auth_reader" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "rbac.authorization.k8s.io/v1"
-		kind = "RoleBinding"
-		metadata = {
-			name = "metrics-server-auth-reader"
-			namespace = "kube-system"
-		}
-		roleRef = {
-			apiGroup = "rbac.authorization.k8s.io"
-			kind = "Role"
-			name = "extension-apiserver-authentication-reader"
-		}
-		subjects = [
-			{
-				kind = "ServiceAccount"
-				name = "metrics-server"
-				namespace = "kube-system"
-			},
-		]
-	}
-	depends_on = [
-		kubernetes_manifest.metrics_server_service_account,
-	]
-}
+# resource "kubernetes_manifest" "metrics_server_role_binding_auth_reader" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "rbac.authorization.k8s.io/v1"
+# 		kind = "RoleBinding"
+# 		metadata = {
+# 			name = "metrics-server-auth-reader"
+# 			namespace = "kube-system"
+# 		}
+# 		roleRef = {
+# 			apiGroup = "rbac.authorization.k8s.io"
+# 			kind = "Role"
+# 			name = "extension-apiserver-authentication-reader"
+# 		}
+# 		subjects = [
+# 			{
+# 				kind = "ServiceAccount"
+# 				name = "metrics-server"
+# 				namespace = "kube-system"
+# 			},
+# 		]
+# 	}
+# 	depends_on = [
+# 		kubernetes_manifest.metrics_server_service_account,
+# 	]
+# }
 
-resource "kubernetes_manifest" "metrics_server_cluster_role_binding" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "rbac.authorization.k8s.io/v1"
-		kind = "ClusterRoleBinding"
-		metadata = {
-			name = "system:metrics-server"
-		}
-		roleRef = {
-			apiGroup = "rbac.authorization.k8s.io"
-			kind = "ClusterRole"
-			name = "system:metrics-server"
-		}
-		subjects = [
-			{
-				kind = "ServiceAccount"
-				name = "metrics-server"
-				namespace = "kube-system"
-			},
-		]
-	}
-	depends_on = [
-		kubernetes_manifest.metrics_server_cluster_role,
-		kubernetes_manifest.metrics_server_service_account,
-	]
-}
+# resource "kubernetes_manifest" "metrics_server_cluster_role_binding" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "rbac.authorization.k8s.io/v1"
+# 		kind = "ClusterRoleBinding"
+# 		metadata = {
+# 			name = "system:metrics-server"
+# 		}
+# 		roleRef = {
+# 			apiGroup = "rbac.authorization.k8s.io"
+# 			kind = "ClusterRole"
+# 			name = "system:metrics-server"
+# 		}
+# 		subjects = [
+# 			{
+# 				kind = "ServiceAccount"
+# 				name = "metrics-server"
+# 				namespace = "kube-system"
+# 			},
+# 		]
+# 	}
+# 	depends_on = [
+# 		kubernetes_manifest.metrics_server_cluster_role,
+# 		kubernetes_manifest.metrics_server_service_account,
+# 	]
+# }
 
-resource "kubernetes_manifest" "metrics_server_cluster_role_binding_auth_delegator" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "rbac.authorization.k8s.io/v1"
-		kind = "ClusterRoleBinding"
-		metadata = {
-			name = "metrics-server:system:auth-delegator"
-		}
-		roleRef = {
-			apiGroup = "rbac.authorization.k8s.io"
-			kind = "ClusterRole"
-			name = "system:auth-delegator"
-		}
-		subjects = [
-			{
-				kind = "ServiceAccount"
-				name = "metrics-server"
-				namespace = "kube-system"
-			},
-		]
-	}
-	depends_on = [
-		kubernetes_manifest.metrics_server_service_account,
-	]
-}
+# resource "kubernetes_manifest" "metrics_server_cluster_role_binding_auth_delegator" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "rbac.authorization.k8s.io/v1"
+# 		kind = "ClusterRoleBinding"
+# 		metadata = {
+# 			name = "metrics-server:system:auth-delegator"
+# 		}
+# 		roleRef = {
+# 			apiGroup = "rbac.authorization.k8s.io"
+# 			kind = "ClusterRole"
+# 			name = "system:auth-delegator"
+# 		}
+# 		subjects = [
+# 			{
+# 				kind = "ServiceAccount"
+# 				name = "metrics-server"
+# 				namespace = "kube-system"
+# 			},
+# 		]
+# 	}
+# 	depends_on = [
+# 		kubernetes_manifest.metrics_server_service_account,
+# 	]
+# }
 
-resource "kubernetes_manifest" "metrics_server_deployment" {
-	provider = kubernetes-alpha
-	manifest = {
-		apiVersion = "apps/v1"
-		kind = "Deployment"
-		metadata = {
-			labels = {
-				"k8s-app": "metrics-server"
-			}
-			name = "metrics-server"
-			namespace = "kube-system"			
-		}
-		spec = {
-			selector = {
-				matchLabels = {
-					"k8s-app": "metrics-server"
-				}
-			}
-			template = {
-				metadata = {
-					name: "metrics-server"
-					labels = {
-						"k8s-app" = "metrics-server"
-					}
-				}
-				spec = {
-					containers = [
-						{
-							args = [
-								"--cert-dir=/tmp",
-								"--secure-port=4443",
-							]
-							image = var.metrics_server_docker_img
-							imagePullPolicy = "IfNotPresent"
-							name = "metrics-server"
-							ports = [
-								{
-									containerPort = 4443
-									name = "main-port"
-									protocol = "TCP"
-								},
-							]
-							securityContext = {
-								readOnlyRootFilesystem = true
-								runAsNonRoot = true
-								runAsUser = 1000
-							}
-							volumeMounts = [
-								{
-									mountPath = "/tmp"
-									name = "tmp-dir"
-								},
-							]
-						},
-					]
-					nodeSelector = {
-						"kubernetes.io/os" = "linux"
-					}
-					serviceAccountName = "metrics-server"
-					volumes = [
-						{
-							emptyDir = {}
-							name = "tmp-dir"
-						},
-					]
-				}
-			}
-		}
-	}
-	depends_on = [
-		kubernetes_manifest.metrics_server_service_account,
-	]
-}
+# resource "kubernetes_manifest" "metrics_server_deployment" {
+# 	provider = kubernetes-alpha
+# 	manifest = {
+# 		apiVersion = "apps/v1"
+# 		kind = "Deployment"
+# 		metadata = {
+# 			labels = {
+# 				"k8s-app": "metrics-server"
+# 			}
+# 			name = "metrics-server"
+# 			namespace = "kube-system"			
+# 		}
+# 		spec = {
+# 			selector = {
+# 				matchLabels = {
+# 					"k8s-app": "metrics-server"
+# 				}
+# 			}
+# 			template = {
+# 				metadata = {
+# 					name: "metrics-server"
+# 					labels = {
+# 						"k8s-app" = "metrics-server"
+# 					}
+# 				}
+# 				spec = {
+# 					containers = [
+# 						{
+# 							args = [
+# 								"--cert-dir=/tmp",
+# 								"--secure-port=4443",
+# 							]
+# 							image = var.metrics_server_docker_img
+# 							imagePullPolicy = "IfNotPresent"
+# 							name = "metrics-server"
+# 							ports = [
+# 								{
+# 									containerPort = 4443
+# 									name = "main-port"
+# 									protocol = "TCP"
+# 								},
+# 							]
+# 							securityContext = {
+# 								readOnlyRootFilesystem = true
+# 								runAsNonRoot = true
+# 								runAsUser = 1000
+# 							}
+# 							volumeMounts = [
+# 								{
+# 									mountPath = "/tmp"
+# 									name = "tmp-dir"
+# 								},
+# 							]
+# 						},
+# 					]
+# 					nodeSelector = {
+# 						"kubernetes.io/os" = "linux"
+# 					}
+# 					serviceAccountName = "metrics-server"
+# 					volumes = [
+# 						{
+# 							emptyDir = {}
+# 							name = "tmp-dir"
+# 						},
+# 					]
+# 				}
+# 			}
+# 		}
+# 	}
+# 	depends_on = [
+# 		kubernetes_manifest.metrics_server_service_account,
+# 	]
+# }

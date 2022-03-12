@@ -23,7 +23,6 @@ resource "kubernetes_config_map" "aws_auth" {
 }
 
 resource "kubernetes_manifest" "eks_admin_service_account" {
-  provider = kubernetes-alpha
   manifest = {
     apiVersion = "v1"
     kind = "ServiceAccount"
@@ -35,7 +34,6 @@ resource "kubernetes_manifest" "eks_admin_service_account" {
 }
 
 resource "kubernetes_manifest" "eks_admin_cluster_role_binding" {
-  provider = kubernetes-alpha
   manifest = {
     apiVersion = "rbac.authorization.k8s.io/v1"
     kind = "ClusterRoleBinding"
