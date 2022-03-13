@@ -66,8 +66,8 @@ rm -rfv .terraform terraform.tfstate*
 mv ./backend.tf /var/tmp
 
 # provision resources
-terraform init
-terraform apply
+terraform init -upgrade
+terraform apply -auto-approve
 
 # import local state to remote backend
 mv /var/tmp/backend.tf .

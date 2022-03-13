@@ -1,0 +1,3 @@
+[submodule "src/eks_cert_fingerprint_indexer"]
+	path = src/eks_cert_fingerprint_indexer
+	url = git@github.com:dallasmarlow/eks_cert_fingerprint_indexer.git

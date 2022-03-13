@@ -1,4 +1,5 @@
 crash.log
+dist
 docker/aws
 errored.tfstate
 projects/eks-cluster/charts/*.tgz
