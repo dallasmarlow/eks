@@ -10,6 +10,12 @@ data "archive_file" "fingerprint_indexer" {
   type        = "zip"
 }
 
+resource "aws_lambda_alias" "fingerprint_indexer" {
+  name             = local.fingerprint_indexer_name
+  function_name    = aws_lambda_function.fingerprint_indexer.function_name
+  function_version = "$LATEST"
+}
+
 resource "aws_lambda_function" "fingerprint_indexer" {
   architectures                  = ["x86_64"] # ["arm64"]
   filename                       = data.archive_file.fingerprint_indexer.output_path
@@ -30,6 +36,15 @@ resource "aws_lambda_function" "fingerprint_indexer" {
     ]
     subnet_ids = data.terraform_remote_state.vpc.outputs.primary_subnet_ids
   }
+}
+
+resource "aws_lambda_permission" "fingerprint_indexer" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.fingerprint_indexer.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.fingerprint_indexer.arn
+  statement_id  = "AllowExecutionFromCloudWatch"
+  qualifier     = aws_lambda_alias.fingerprint_indexer.name
 }
 
 resource "null_resource" "fingerprint_indexer" {
