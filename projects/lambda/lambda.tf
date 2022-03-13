@@ -25,6 +25,7 @@ resource "aws_lambda_function" "fingerprint_indexer" {
 
   vpc_config {
     security_group_ids = [
+      aws_security_group.lambda_egress.id,
       data.terraform_remote_state.eks_cluster.outputs.cluster_sg_id,
     ]
     subnet_ids = data.terraform_remote_state.vpc.outputs.primary_subnet_ids

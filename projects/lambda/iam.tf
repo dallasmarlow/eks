@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "fingerprint_indexer" {
       "ssm:PutParameter",
     ]
     resources = [
-      "arn:aws:ssm::${var.region}:${var.account_id}:parameter/eks_cluster_oidc_fingerprints/*",
+      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/eks_cluster_oidc_fingerprints/*",
     ]
     sid = "SsmReadWrite"
   }
