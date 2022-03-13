@@ -1,7 +1,9 @@
 crash.log
-dist
+dist/*.zip
 docker/aws
 errored.tfstate
+go.mod
+go.sum
 projects/eks-cluster/charts/*.tgz
 projects/eks-cluster/charts/index.yaml
 projects/route53/import_zone.sh

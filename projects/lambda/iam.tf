@@ -47,12 +47,12 @@ data "aws_iam_policy_document" "fingerprint_indexer" {
 }
 
 resource "aws_iam_policy" "fingerprint_indexer" {
-  name   = "eks-cert-fingerprint-indexer"
+  name   = local.fingerprint_indexer_name
   policy = data.aws_iam_policy_document.fingerprint_indexer.json
 }
 
 resource "aws_iam_role" "fingerprint_indexer" {
-  name               = "eks-cert-fingerprint-indexer"
+  name               = local.fingerprint_indexer_name
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 }
 

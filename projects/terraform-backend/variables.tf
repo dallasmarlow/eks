@@ -165,11 +165,6 @@ variable "k8s_pod_networks" {
   ]
 }
 
-variable "lambda_cloudwatch_log_groups" {
-  type    = list(string)
-  default = []
-}
-
 variable "region" {
   type    = string
   default = "us-east-2"
