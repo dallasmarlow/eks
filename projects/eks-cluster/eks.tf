@@ -1,15 +1,6 @@
-locals {
-  log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-}
-
-resource "aws_cloudwatch_log_group" "eks_cluster" {
-  name              = "/aws/eks/${var.eks_cluster_name}/cluster"
-  retention_in_days = 1
-}
-
 resource "aws_eks_cluster" "eks_cluster" {
   name                      = var.eks_cluster_name
-  enabled_cluster_log_types = local.log_types
+  enabled_cluster_log_types = var.eks_cluster_log_types
   encryption_config {
     provider {
       key_arn = aws_kms_key.eks_cluster.arn

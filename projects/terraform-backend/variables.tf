@@ -23,14 +23,14 @@ variable "bastion_instance_type" {
   default = "t4g.nano"
 }
 
+variable "cloudwatch_log_group_retention_in_days" {
+  type    = number
+  default = 1
+}
+
 variable "ec2_user" {
   type    = string
   default = "ec2-user"
-}
-
-variable "eks_version" {
-  type    = string
-  default = "1.21"
 }
 
 variable "eks_cluster_logs_retention_days" {
@@ -38,10 +38,53 @@ variable "eks_cluster_logs_retention_days" {
   default = 1
 }
 
+variable "eks_cluster_name" {
+  type    = string
+  default = "eks-test"
+}
+
 variable "eks_compute_instance_type" {
   type    = string
   default = "t3a.medium"
 }
+
+variable "eks_cluster_log_types" {
+  type = list(string)
+  default = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler",
+  ]
+}
+
+variable "eks_primary_networks" {
+  type = list(string)
+  default = [
+    "10.200.100.0/28",
+    "10.200.100.16/28",
+  ]
+}
+
+variable "eks_public_networks" {
+  type = list(string)
+  default = [
+    "10.200.100.32/28",
+    "10.200.100.48/28",
+  ]
+}
+
+variable "eks_version" {
+  type    = string
+  default = "1.21"
+}
+
+variable "eks_vpc_network" {
+  type    = string
+  default = "10.200.100.0/26"
+}
+
 
 # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions
 
@@ -109,42 +152,6 @@ variable "kubelet_max_pods" {
   default = 12
 }
 
-variable "region" {
-  type    = string
-  default = "us-east-2"
-}
-
-variable "terraform_url" {
-  type    = string
-  default = "https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_arm64.zip"
-}
-
-variable "remote_network" {
-  type    = string
-  default = "104.162.77.104/32"
-}
-
-variable "eks_vpc_network" {
-  type    = string
-  default = "10.200.100.0/26"
-}
-
-variable "eks_primary_networks" {
-  type = list(string)
-  default = [
-    "10.200.100.0/28",
-    "10.200.100.16/28",
-  ]
-}
-
-variable "eks_public_networks" {
-  type = list(string)
-  default = [
-    "10.200.100.32/28",
-    "10.200.100.48/28",
-  ]
-}
-
 variable "k8s_pod_network" {
   type    = string
   default = "100.64.0.0/20"
@@ -158,12 +165,27 @@ variable "k8s_pod_networks" {
   ]
 }
 
-variable "eks_cluster_name" {
+variable "lambda_cloudwatch_log_groups" {
+  type    = list(string)
+  default = []
+}
+
+variable "region" {
   type    = string
-  default = "eks-test"
+  default = "us-east-2"
+}
+
+variable "remote_network" {
+  type    = string
+  default = "104.162.77.104/32"
 }
 
 variable "route53_zone_domain" {
   type    = string
   default = "cl0wn.shoes"
+}
+
+variable "terraform_url" {
+  type    = string
+  default = "https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_arm64.zip"
 }
