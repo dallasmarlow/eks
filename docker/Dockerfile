@@ -4,7 +4,7 @@ ENV EKS_MGMT 1
 
 RUN apt-get update && \
 	apt-get install -y \
-	curl dnsutils git groff jq less python3-pip ssh vim zip && \
+	curl dnsutils git golang groff jq less python3-pip ssh vim zip && \
 	apt-get clean
 RUN pip3 install awscli
 
